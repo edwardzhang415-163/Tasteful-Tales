@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { 
+  View, 
+  FlatList, 
+  StyleSheet, 
+  ActivityIndicator,
+  RefreshControl 
+} from 'react-native';
 import FeedCard from '../components/FeedCard';
+import { navigateToPost } from '../navigation/navigationUtils';
 
-const FeedScreen = () => {
+const FeedScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchPosts = async () => {
     // TODO: Implement Firebase fetch
-    // For now, using dummy data
     const dummyPosts = [
       {
         id: '1',
@@ -20,7 +26,24 @@ const FeedScreen = () => {
         placeName: 'Home Kitchen',
         likes: 42,
       },
-      // Add more dummy posts
+      {
+        id: '2', 
+        userName: 'TravelBug',
+        userImage: 'https://placekitten.com/101/101',
+        image: 'https://placekitten.com/401/401',
+        caption: 'Beautiful sunset at the beach!',
+        placeName: 'Paradise Beach',
+        likes: 128,
+      },
+      {
+        id: '3',
+        userName: 'ArtLover',
+        userImage: 'https://placekitten.com/102/102', 
+        image: 'https://placekitten.com/402/402',
+        caption: 'My latest painting',
+        placeName: 'Art Studio',
+        likes: 89,
+      }
     ];
     
     setPosts(dummyPosts);
@@ -37,6 +60,10 @@ const FeedScreen = () => {
     setRefreshing(false);
   };
 
+  const handlePostPress = (post) => {
+    navigateToPost(navigation, { post });
+  };
+
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -49,7 +76,12 @@ const FeedScreen = () => {
     <View style={styles.container}>
       <FlatList
         data={posts}
-        renderItem={({ item }) => <FeedCard post={item} />}
+        renderItem={({ item }) => (
+          <FeedCard 
+            post={item} 
+            onPress={() => handlePostPress(item)}
+          />
+        )}
         keyExtractor={item => item.id}
         refreshing={refreshing}
         onRefresh={handleRefresh}

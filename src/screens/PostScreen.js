@@ -1,151 +1,172 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as Location from 'expo-location';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Alert,
+  ScrollView,
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 
-const PostScreen = ({ navigation }) => {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [image, setImage] = useState(null);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-  const cameraRef = useRef(null);
+const PostScreen = ({ navigation, route }) => {
+  const [image, setImage] = useState(route.params?.image || null);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    location: route.params?.placeName || '',
+  });
 
-  React.useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-  const takePicture = async () => {
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-      setImage(photo.uri);
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to pick image');
     }
   };
 
   const handlePost = async () => {
-    // TODO: Implement post creation with Firebase
-    // Upload image to Firebase Storage
-    // Save post data to Firestore
-    navigation.navigate('Feed');
+    if (!image) {
+      Alert.alert('Error', 'Please select a photo');
+      return;
+    }
+
+    if (!formData.title.trim()) {
+      Alert.alert('Error', 'Please enter a title');
+      return;
+    }
+
+    try {
+      // TODO: Implement post creation with Firebase
+      Alert.alert('Success', 'Post created successfully!', [
+        { text: 'OK', onPress: () => navigation.navigate('Feed') }
+      ]);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to create post');
+    }
   };
 
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
   return (
-    <View style={styles.container}>
-      {!image ? (
-        <Camera style={styles.camera} type={type} ref={cameraRef}>
-          <View style={styles.cameraControls}>
-            <TouchableOpacity
-              style={styles.flipButton}
-              onPress={() => {
-                setType(
-                  type === Camera.Constants.Type.back
-                    ? Camera.Constants.Type.front
-                    : Camera.Constants.Type.back
-                );
-              }}>
-              <Ionicons name="camera-reverse" size={30} color="white" />
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
+        {/* Image Preview Section */}
+        <View style={styles.imageSection}>
+          {image ? (
+            <View style={styles.imagePreviewContainer}>
+              <Image source={{ uri: image }} style={styles.imagePreview} />
+              <TouchableOpacity 
+                style={styles.changeImageButton}
+                onPress={() => setImage(null)}>
+                <Ionicons name="close-circle" size={24} color="white" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity 
+              style={styles.imageButton} 
+              onPress={pickImage}
+            >
+              <Ionicons name="images" size={32} color="#FF6B6B" />
+              <Text style={styles.imageButtonText}>Choose from Gallery</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.captureButton}
-              onPress={takePicture}>
-              <View style={styles.captureButtonInner} />
-            </TouchableOpacity>
-          </View>
-        </Camera>
-      ) : (
-        <View style={styles.formContainer}>
-          <Image source={{ uri: image }} style={styles.preview} />
+          )}
+        </View>
+
+        {/* Form Section */}
+        <View style={styles.formSection}>
           <TextInput
             style={styles.input}
             placeholder="Title"
-            value={title}
-            onChangeText={setTitle}
+            value={formData.title}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, title: text }))}
           />
           <TextInput
             style={styles.input}
             placeholder="Location"
-            value={location}
-            onChangeText={setLocation}
+            value={formData.location}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, location: text }))}
           />
           <TextInput
             style={[styles.input, styles.descriptionInput]}
             placeholder="Description"
-            value={description}
-            onChangeText={setDescription}
+            value={formData.description}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
             multiline
           />
-          <TouchableOpacity style={styles.postButton} onPress={handlePost}>
+          <TouchableOpacity 
+            style={[styles.postButton, !image && styles.disabledButton]}
+            onPress={handlePost}
+            disabled={!image}
+          >
             <Text style={styles.postButtonText}>Post</Text>
           </TouchableOpacity>
         </View>
-      )}
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
-  camera: {
-    flex: 1,
-  },
-  cameraControls: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'flex-end',
-    paddingBottom: 20,
-  },
-  flipButton: {
-    alignSelf: 'flex-end',
-    marginBottom: 20,
-  },
-  captureButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    borderWidth: 5,
-    borderColor: 'white',
-    marginBottom: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  captureButtonInner: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: 'white',
-  },
-  formContainer: {
-    flex: 1,
+  content: {
     padding: 20,
   },
-  preview: {
-    width: '100%',
-    height: 200,
-    borderRadius: 10,
+  imageSection: {
     marginBottom: 20,
+    alignItems: 'center',
+  },
+  imageButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 40,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+    width: '100%',
+  },
+  imageButtonText: {
+    marginTop: 8,
+    color: '#666',
+  },
+  imagePreviewContainer: {
+    position: 'relative',
+    width: '100%',
+  },
+  imagePreview: {
+    width: '100%',
+    height: 300,
+    borderRadius: 10,
+  },
+  changeImageButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 15,
+    padding: 5,
+  },
+  formSection: {
+    gap: 15,
   },
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
   },
   descriptionInput: {
     height: 100,
@@ -154,13 +175,18 @@ const styles = StyleSheet.create({
   postButton: {
     backgroundColor: '#FF6B6B',
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 8,
     alignItems: 'center',
+    marginTop: 10,
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
   },
   postButtonText: {
     color: 'white',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
 
-export default PostScreen; 
+export default PostScreen;
