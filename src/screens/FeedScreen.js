@@ -20,8 +20,8 @@ const FeedScreen = ({ navigation }) => {
       {
         id: '1',
         userName: 'FoodLover',
-        userImage: 'https://placekitten.com/100/100',
-        image: 'https://placekitten.com/400/400',
+        userImage: 'https://placekitten.com/300/300',
+        image: 'https://placekitten.com/300/300',
         caption: 'Delicious homemade pasta!',
         placeName: 'Home Kitchen',
         likes: 42,
@@ -29,8 +29,8 @@ const FeedScreen = ({ navigation }) => {
       {
         id: '2', 
         userName: 'TravelBug',
-        userImage: 'https://placekitten.com/101/101',
-        image: 'https://placekitten.com/401/401',
+        userImage: 'https://placedog.net/301/301',
+        image: 'https://foodish-api.herokuapp.com/images/burger/burger1.jpg',
         caption: 'Beautiful sunset at the beach!',
         placeName: 'Paradise Beach',
         likes: 128,
@@ -38,8 +38,8 @@ const FeedScreen = ({ navigation }) => {
       {
         id: '3',
         userName: 'ArtLover',
-        userImage: 'https://placekitten.com/102/102', 
-        image: 'https://placekitten.com/402/402',
+        userImage: 'https://placedog.net/302/302', 
+        image: 'https://foodish-api.herokuapp.com/images/pizza/pizza1.jpg',
         caption: 'My latest painting',
         placeName: 'Art Studio',
         likes: 89,
