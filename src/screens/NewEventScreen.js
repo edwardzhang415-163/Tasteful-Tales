@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { writeEventToDB } from '../services/firebaseHelper';
 
 const NewEventScreen = ({ navigation }) => {
   const [eventData, setEventData] = useState({
@@ -22,19 +23,20 @@ const NewEventScreen = ({ navigation }) => {
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!eventData.title || !eventData.location) {
       Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
 
-    // TODO: Save event to database
-    Alert.alert('Success', 'Event created successfully!', [
-      {
-        text: 'OK',
-        onPress: () => navigation.goBack()
-      }
-    ]);
+    try {
+      await writeEventToDB({ ...eventData, owner: "DummyUserId", userName: "John"});
+      Alert.alert('Success', 'Event created successfully!', [
+        { text: 'OK', onPress: () => navigation.goBack() }
+      ]);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
   };
 
   const onDateChange = (event, selectedDate) => {

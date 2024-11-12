@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import EventCard from '../components/EventCard';
+import { db } from '../services/firebaseSetup';
+import { onSnapshot, collection } from 'firebase/firestore';
 
 // Configure notifications
 Notifications.setNotificationHandler({
@@ -16,8 +18,26 @@ const EventsScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    // TODO: Fetch events from Firebase
-    // For now, using dummy data
+    const unsubscribe = onSnapshot(collection(db, "events"), (snapshot) => {
+      let eventsArray = [];
+      snapshot.forEach((docSnapshot) => {
+        const data = docSnapshot.data();
+        console.log(data);
+        eventsArray.push({
+          id: docSnapshot.id,
+          title: data.title,
+          description: data.description,
+          date: data.date.toDate(),
+          location: data.location,
+          reminder: true});
+      });
+      setEvents(eventsArray);
+    },
+    (error) => {
+      console.log("Error in onSnapshot: ", error);
+      Alert.alert(error.message);
+    });
+    return () => unsubscribe()
     setEvents([
       {
         id: '1',

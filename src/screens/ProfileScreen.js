@@ -21,12 +21,12 @@ const ProfileScreen = () => {
     bio: 'Food enthusiast and amateur chef 🍳',
     profileImage: 'https://placedog.net/301/301',
     postsCount: 42,
-    followersCount: 1234,
-    followingCount: 567,
+    followersCount: 0,
+    followingCount: 0,
   });
   const [refreshing, setRefreshing] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
-  const userId = 'DummyUserId'; // Replace with the actual user ID
+  const userId = 'DummyUserId'; //  Needs to be replaced with the actual user ID
 
 
   const fetchUserPosts = async () => {

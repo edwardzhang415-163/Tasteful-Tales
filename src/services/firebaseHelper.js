@@ -33,4 +33,15 @@ export async function writePostToDB(data, image, collectionName) {
   }
 }
 
+export async function writeEventToDB(data) {
+  try {
+    const docRef = await addDoc(collection(db, "events"), data);
+    return docRef
+  } catch (err) {
+    console.error("Write event to database: ", err);
+  }
+}
+
+
+
 
