@@ -10,6 +10,7 @@ import FeedCard from '../components/FeedCard';
 import { navigateToPost } from '../navigation/navigationUtils';
 import { db } from '../services/firebaseSetup';
 import {onSnapshot, collection} from 'firebase/firestore';
+import { getUserData } from '../services/firebaseHelper';
 
 const FeedScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
