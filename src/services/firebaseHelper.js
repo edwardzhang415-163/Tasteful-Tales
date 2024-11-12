@@ -3,7 +3,7 @@ import { db } from "./firebaseSetup";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebaseSetup";
 
-async function uploadImageData(uri) {
+export async function uploadImageData(uri) {
   try {
     // fetch local image from the uri
     const response = await fetch(uri);
@@ -60,7 +60,6 @@ export async function deleteEventFromDB(eventId) {
     console.error('Error deleting event:', error);
   }
 }
-
 
 
 
