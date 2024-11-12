@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 import EventCard from '../components/EventCard';
 import { db } from '../services/firebaseSetup';
 import { onSnapshot, collection } from 'firebase/firestore';
+import { deleteEventFromDB } from '../services/firebaseHelper';
 
 // Configure notifications
 Notifications.setNotificationHandler({
@@ -22,7 +23,6 @@ const EventsScreen = ({ navigation }) => {
       let eventsArray = [];
       snapshot.forEach((docSnapshot) => {
         const data = docSnapshot.data();
-        console.log(data);
         eventsArray.push({
           id: docSnapshot.id,
           title: data.title,
@@ -38,17 +38,6 @@ const EventsScreen = ({ navigation }) => {
       Alert.alert(error.message);
     });
     return () => unsubscribe()
-    setEvents([
-      {
-        id: '1',
-        title: 'Food Festival',
-        description: 'Annual street food festival',
-        date: new Date('2024-10-15'),
-        location: 'Central Park',
-        reminder: true,
-      },
-      // Add more dummy events
-    ]);
   }, []);
 
   const scheduleNotification = async (event) => {
@@ -70,12 +59,12 @@ const EventsScreen = ({ navigation }) => {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    // TODO: Delete from Firebase
+    await deleteEventFromDB(eventId);
     setEvents(events.filter(event => event.id !== eventId));
   };
 
   const handleEditEvent = (event) => {
-    navigation.navigate('EditEvent', { event });
+    navigation.navigate('NewEvent', {event});
   };
 
   return (

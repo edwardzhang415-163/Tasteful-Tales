@@ -43,5 +43,15 @@ export async function writeEventToDB(data) {
 }
 
 
+export async function deleteEventFromDB(eventId) {
+  try {
+    const eventDoc = doc(db, 'events', eventId);
+    await deleteDoc(eventDoc);
+  } catch (error) {
+    console.error('Error deleting event:', error);
+  }
+}
+
+
 
 

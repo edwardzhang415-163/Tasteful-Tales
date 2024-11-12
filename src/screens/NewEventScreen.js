@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { writeEventToDB } from '../services/firebaseHelper';
 
-const NewEventScreen = ({ navigation }) => {
+const NewEventScreen = ({ navigation, route }) => {
   const [eventData, setEventData] = useState({
     title: '',
     description: '',
@@ -20,6 +20,13 @@ const NewEventScreen = ({ navigation }) => {
     date: new Date(),
     reminder: true,
   });
+
+  useEffect(() => {
+    if (route.params?.event) {
+      navigation.setOptions({ title: 'Edit Event' });
+      setEventData(route.params.event)
+    }
+  }, []);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
