@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { writeEventToDB } from '../services/firebaseHelper';
+import { writeEventToDB, updateEventToDB } from '../services/firebaseHelper';
 
 const NewEventScreen = ({ navigation, route }) => {
   const [eventData, setEventData] = useState({
@@ -37,10 +37,17 @@ const NewEventScreen = ({ navigation, route }) => {
     }
 
     try {
-      await writeEventToDB({ ...eventData, owner: "DummyUserId", userName: "John"});
-      Alert.alert('Success', 'Event created successfully!', [
-        { text: 'OK', onPress: () => navigation.goBack() }
-      ]);
+      if (route.params?.event) {
+        await updateEventToDB(route.params.event.id, { ...eventData, owner: "DummyUserId", userName: "John"});
+        Alert.alert('Success', 'Event updated successfully!', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
+      } else {
+        await writeEventToDB({ ...eventData, owner: "DummyUserId", userName: "John"});
+        Alert.alert('Success', 'Event created successfully!', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
+      }
     } catch (error) {
       Alert.alert('Error', error.message);
     }

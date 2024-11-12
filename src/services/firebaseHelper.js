@@ -1,4 +1,4 @@
-import { doc, addDoc, collection, setDoc, deleteDoc } from "firebase/firestore";
+import { doc, addDoc, collection, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "./firebaseSetup";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebaseSetup";
@@ -39,6 +39,17 @@ export async function writeEventToDB(data) {
     return docRef
   } catch (err) {
     console.error("Write event to database: ", err);
+  }
+}
+
+export async function updateEventToDB(eventId, data) {
+  try {
+    const eventRef = doc(db, 'events', eventId);
+    await updateDoc(eventRef, data);
+    console.log('Event updated successfully');
+  } catch (error) {
+    console.error('Error updating event:', error);
+    throw new Error('Failed to update event');
   }
 }
 

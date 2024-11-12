@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../services/firebaseSetup';
 
 const EditProfileScreen = ({ navigation, route }) => {
   const [formData, setFormData] = useState({
@@ -17,10 +19,17 @@ const EditProfileScreen = ({ navigation, route }) => {
 
   const handleSave = async () => {
     try {
-      // TODO: Update user profile in Firebase
+      const userRef = doc(db, 'users', route.params.userId);
+      await updateDoc(userRef, {
+        displayName: formData.displayName,
+        bio: formData.bio,
+        email: formData.email,
+      });
+      route.params.onProfileUpdate();
       Alert.alert('Success', 'Profile updated successfully!');
       navigation.goBack();
     } catch (error) {
+      console.error("Error updating profile:", error);
       Alert.alert('Error', 'Failed to update profile');
     }
   };
@@ -59,7 +68,7 @@ const EditProfileScreen = ({ navigation, route }) => {
         />
       </View>
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.saveButton}
         onPress={handleSave}
       >
