@@ -1,6 +1,6 @@
 import { doc, addDoc, collection, setDoc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebaseSetup";
-import { ref, uploadBytesResumable } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebaseSetup";
 
 async function uploadImageData(uri) {
@@ -15,17 +15,18 @@ async function uploadImageData(uri) {
     const imageName = uri.substring(uri.lastIndexOf('/') + 1);
     const imageRef = ref(storage, `images/${imageName}`)
     const uploadResult = await uploadBytesResumable(imageRef, blob);
-    console.log("Image uploaded successfully: ", uploadResult);
+    const downloadURL = await getDownloadURL(imageRef);
+    // console.log("Image uploaded successfully: ", uploadResult);
+    return downloadURL
   } catch (error) { 
     console.log("Error in fetching the image: ", error);
   }
 }
 
-export async function writePostToDB(data, imageUri, collectionName) {
+export async function writePostToDB(data, image, collectionName) {
   try {
-    console.log(process.env.EXPO_PUBLIC_API_apiKey);
-    const docRef = await addDoc(collection(db, collectionName), {text: 'test'});
-    await uploadImageData(imageUri);
+    const imageUri = await uploadImageData(image);
+    const docRef = await addDoc(collection(db, collectionName), {...data, image: imageUri});
     return docRef
   } catch (err) {
     console.error("Write post to database: ", err);

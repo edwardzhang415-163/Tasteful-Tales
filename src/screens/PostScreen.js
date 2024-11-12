@@ -50,7 +50,7 @@ const PostScreen = ({ navigation, route }) => {
     }
 
     try {
-      await writePostToDB({ ...formData }, image, "posts");
+      await writePostToDB({ ...formData, owner: "DummyUser" }, image, "posts");
       Alert.alert('Success', 'Post created successfully!', [
         { text: 'OK', onPress: () => navigation.navigate('Feed') }
       ]);

@@ -31,8 +31,8 @@ const FeedCard = ({ post }) => {
       </View>
       
       <View style={styles.content}>
-        <Text style={styles.caption}>{post.caption}</Text>
-        <Text style={styles.location}>{post.placeName}</Text>
+        <Text style={styles.caption}>{post.title}</Text>
+        <Text style={styles.location}>{post.location}</Text>
       </View>
     </View>
   );
