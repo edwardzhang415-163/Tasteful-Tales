@@ -9,18 +9,55 @@ import {
 import FeedCard from '../components/FeedCard';
 import { navigateToPost } from '../navigation/navigationUtils';
 import { db } from '../services/firebaseSetup';
-import {onSnapshot, collection} from 'firebase/firestore';
-import { fetchAllPostsAndUsers } from '../services/firebaseHelper';
+import {onSnapshot, collection, doc, getDoc, getDocs} from 'firebase/firestore';
 
 const FeedScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchPosts = async () => {
-    const postsData = await fetchAllPostsAndUsers();
-    setPosts(postsData);
-    setLoading(false);
+  async function fetchPosts() {
+    try {
+      const unsubscribe = onSnapshot(collection(db, 'posts'), async (postsSnapshot) => {
+        if (postsSnapshot.empty) {
+          console.log("No posts found in the 'posts' collection.");
+          return;
+        }
+        // Process each post document and fetch user info
+        const postsWithUserInfo = await Promise.all(
+          postsSnapshot.docs.map(async (postDoc) => {
+            if (!postDoc.exists) {
+              console.warn(`Post document does not exist: ${postDoc.id}`);
+              return null;
+            }
+  
+            const postData = postDoc.data();
+  
+            if (!postData.owner) {
+              console.warn(`User ID is missing in post document: ${postDoc.id}`);
+              return { postId: postDoc.id, ...postData, user: null };
+            }
+  
+            const userId = postData.owner;
+            const userRef = doc(db, 'users', userId);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.exists() ? userSnap.data() : null;
+            return {
+              postId: postDoc.id,
+              ...postData,
+              userImage: userData?.profileImage,
+              userName: userData?.displayName,
+            };
+          })
+        );
+        setPosts(postsWithUserInfo);
+        setLoading(false);
+      });
+      return unsubscribe;
+    } catch (error) {
+      console.error('Error fetching posts and user information:', error);
+      throw new Error('Failed to fetch posts and user information');
+    }
   };
 
   useEffect(() => {
