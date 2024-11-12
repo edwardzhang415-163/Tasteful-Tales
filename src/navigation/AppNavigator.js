@@ -1,5 +1,4 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +12,6 @@ import ProfileScreen from '../screens/ProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import NewEventScreen from '../screens/NewEventScreen';
 import EditEventScreen from '../screens/EditEventScreen';
-import PostDetailsScreen from '../screens/PostDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,11 +23,6 @@ const FeedStack = () => (
       name="FeedHome" 
       component={FeedScreen}
       options={{ title: 'Feed' }}
-    />
-    <Stack.Screen 
-      name="PostDetails" 
-      component={PostDetailsScreen}
-      options={{ title: 'Post' }}
     />
   </Stack.Navigator>
 );
@@ -132,9 +125,7 @@ const TabNavigator = () => (
 // Main App Navigator
 const AppNavigator = () => {
   return (
-    <NavigationContainer>
-      <TabNavigator />
-    </NavigationContainer>
+    <TabNavigator />
   );
 };
 
