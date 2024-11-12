@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  FlatList, 
-  StyleSheet, 
+import {
+  View,
+  FlatList,
+  StyleSheet,
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import FeedCard from '../components/FeedCard';
 import { navigateToPost } from '../navigation/navigationUtils';
 import { db } from '../services/firebaseSetup';
-import {onSnapshot, collection, doc, getDoc, getDocs} from 'firebase/firestore';
+import { onSnapshot, collection, doc, getDoc, getDocs } from 'firebase/firestore';
 
 const FeedScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
@@ -30,14 +30,14 @@ const FeedScreen = ({ navigation }) => {
               console.warn(`Post document does not exist: ${postDoc.id}`);
               return null;
             }
-  
+
             const postData = postDoc.data();
-  
+
             if (!postData.owner) {
               console.warn(`User ID is missing in post document: ${postDoc.id}`);
               return { postId: postDoc.id, ...postData, user: null };
             }
-  
+
             const userId = postData.owner;
             const userRef = doc(db, 'users', userId);
             const userSnap = await getDoc(userRef);
@@ -50,7 +50,11 @@ const FeedScreen = ({ navigation }) => {
             };
           })
         );
-        setPosts(postsWithUserInfo);
+        const sortedPosts = postsWithUserInfo
+          .filter((post) => post !== null)
+          .sort((a, b) => b.createdDate - a.createdDate);
+
+        setPosts(sortedPosts);
         setLoading(false);
       });
       return unsubscribe;
@@ -87,8 +91,8 @@ const FeedScreen = ({ navigation }) => {
       <FlatList
         data={posts}
         renderItem={({ item }) => (
-          <FeedCard 
-            post={item} 
+          <FeedCard
+            post={item}
             onPress={() => handlePostPress(item)}
           />
         )}

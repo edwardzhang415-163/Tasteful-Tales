@@ -24,7 +24,7 @@ async function uploadImageData(uri) {
 export async function writePostToDB(data, image, collectionName) {
   try {
     const imageUri = await uploadImageData(image);
-    const docRef = await addDoc(collection(db, collectionName), { ...data, image: imageUri });
+    const docRef = await addDoc(collection(db, collectionName), { ...data, image: imageUri, createdDate: new Date() });
     return docRef
   } catch (err) {
     console.error("Write post to database: ", err);
