@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react
 import * as Notifications from 'expo-notifications';
 import EventCard from '../components/EventCard';
 import { db } from '../services/firebaseSetup';
-import { onSnapshot, collection } from 'firebase/firestore';
+import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { deleteEventFromDB } from '../services/firebaseHelper';
 
 // Configure notifications
@@ -17,9 +17,10 @@ Notifications.setNotificationHandler({
 
 const EventsScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
-
+  const userId = 'DummyUserId'
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "events"), (snapshot) => {
+    const q = query(collection(db, 'events'), where('owner', '==', userId));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       let eventsArray = [];
       snapshot.forEach((docSnapshot) => {
         const data = docSnapshot.data();
