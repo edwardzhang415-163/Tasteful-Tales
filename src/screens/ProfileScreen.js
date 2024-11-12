@@ -11,25 +11,43 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { db } from '../services/firebaseSetup';
+import {query, collection, where, onSnapshot} from 'firebase/firestore';
 
 const ProfileScreen = () => {
   const [userProfile, setUserProfile] = useState({
     displayName: 'John Doe',
     email: 'john@example.com',
     bio: 'Food enthusiast and amateur chef 🍳',
-    profileImage: 'https://placekitten.com/200/200',
+    profileImage: 'https://placedog.net/301/301',
     postsCount: 42,
     followersCount: 1234,
     followingCount: 567,
   });
   const [refreshing, setRefreshing] = useState(false);
-  const [userPosts, setUserPosts] = useState([
-    // Dummy data
-    { id: 1, imageUrl: 'https://placekitten.com/300/300' },
-    { id: 2, imageUrl: 'https://placekitten.com/301/301' },
-    { id: 3, imageUrl: 'https://placekitten.com/302/302' },
-    // Add more dummy posts
-  ]);
+  const [userPosts, setUserPosts] = useState([]);
+  const userId = 'DummyUserId'; // Replace with the actual user ID
+
+
+  const fetchUserPosts = async () => {
+    const q = query(collection(db, 'posts'), where('owner', '==', userId));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let postsArray = [];
+      snapshot.forEach((docSnapshot) => {
+        postsArray.push({ imageUrl: docSnapshot.data().image, id: docSnapshot.id });
+      });
+      setUserPosts(postsArray);
+    },
+    (error) => {
+      console.log("Error in onSnapshot: ", error);
+      Alert.alert(error.message);
+    });
+    return () => unsubscribe()
+  };
+
+  useEffect(() => {
+    fetchUserPosts();
+  }, []);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
