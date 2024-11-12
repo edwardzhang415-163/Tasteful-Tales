@@ -1,4 +1,4 @@
-import { doc, addDoc, collection, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { doc, addDoc, collection, setDoc, deleteDoc, updateDoc, getDocs, getDoc } from "firebase/firestore";
 import { db } from "./firebaseSetup";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebaseSetup";
@@ -18,7 +18,7 @@ async function uploadImageData(uri) {
     const downloadURL = await getDownloadURL(imageRef);
     // console.log("Image uploaded successfully: ", uploadResult);
     return downloadURL
-  } catch (error) { 
+  } catch (error) {
     console.log("Error in fetching the image: ", error);
   }
 }
@@ -26,12 +26,39 @@ async function uploadImageData(uri) {
 export async function writePostToDB(data, image, collectionName) {
   try {
     const imageUri = await uploadImageData(image);
-    const docRef = await addDoc(collection(db, collectionName), {...data, image: imageUri});
+    const docRef = await addDoc(collection(db, collectionName), { ...data, image: imageUri });
     return docRef
   } catch (err) {
     console.error("Write post to database: ", err);
   }
 }
+
+export async function fetchAllPostsAndUsers() {
+  try {
+    const postsSnapshot = await getDocs(collection(db, 'posts'));
+
+    const postsWithUserInfo = await Promise.all(
+      postsSnapshot.docs.map(async (postDoc) => {
+        const postData = postDoc.data();
+        const userId = postData.owner;
+
+        const userRef = doc(db, 'users', userId);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.exists() ? userSnap.data() : null;
+        return {
+          postId: postDoc.id,
+          ...postData,
+          userImage: userData?.profileImage,
+          userName: userData?.displayName,
+        };
+      })
+    );
+    return postsWithUserInfo;
+  } catch (error) {
+    console.error('Error fetching posts and user information:', error);
+    throw new Error('Failed to fetch posts and user information');
+  }
+};
 
 export async function writeEventToDB(data) {
   try {

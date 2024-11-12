@@ -10,7 +10,7 @@ import FeedCard from '../components/FeedCard';
 import { navigateToPost } from '../navigation/navigationUtils';
 import { db } from '../services/firebaseSetup';
 import {onSnapshot, collection} from 'firebase/firestore';
-import { getUserData } from '../services/firebaseHelper';
+import { fetchAllPostsAndUsers } from '../services/firebaseHelper';
 
 const FeedScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
@@ -18,20 +18,9 @@ const FeedScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchPosts = async () => {
-    const unsubscribe = onSnapshot(collection(db, "posts"), (snapshot) => {
-      let postsArray = [];
-      snapshot.forEach((docSnapshot) => {
-        postsArray.push({ ...docSnapshot.data(), id: docSnapshot.id });
-      });
-      setPosts(postsArray);
-    },
-    (error) => {
-      console.log("Error in onSnapshot: ", error);
-      Alert.alert(error.message);
-    });
+    const postsData = await fetchAllPostsAndUsers();
+    setPosts(postsData);
     setLoading(false);
-
-    return () => unsubscribe()
   };
 
   useEffect(() => {
