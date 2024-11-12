@@ -18,7 +18,7 @@ const FeedCard = ({ post }) => {
         style={styles.mainImage} 
       />
       
-      <View style={styles.actions}>
+      {/* <View style={styles.actions}>
         <TouchableOpacity>
           <Ionicons name="heart-outline" size={24} color="black" />
         </TouchableOpacity>
@@ -28,7 +28,7 @@ const FeedCard = ({ post }) => {
         <TouchableOpacity>
           <Ionicons name="location-outline" size={24} color="black" />
         </TouchableOpacity>
-      </View>
+      </View> */}
       
       <View style={styles.content}>
         <Text style={styles.caption}>{post.title}</Text>
