@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import EventCard from '../components/EventCard';
 import { db } from '../services/firebaseSetup';
@@ -59,8 +59,24 @@ const EventsScreen = ({ navigation }) => {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    await deleteEventFromDB(eventId);
-    setEvents(events.filter(event => event.id !== eventId));
+    Alert.alert(
+      'Delete Event',
+      'Are you sure you want to delete this event?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            await deleteEventFromDB(eventId);
+            setEvents(events.filter(event => event.id !== eventId));
+          }
+        }
+      ],
+      { cancelable: false }
+    )
   };
 
   const handleEditEvent = (event) => {
