@@ -65,6 +65,8 @@ const PostScreen = ({ navigation, route }) => {
     } catch (error) {
       Alert.alert('Error', 'Failed to create post');
     } finally {
+      setFormData({ title: '', description: '', location: '' });
+      setImage(null);
       setIsLoading(false);
     }
   };
