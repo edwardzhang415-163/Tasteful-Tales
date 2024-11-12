@@ -8,6 +8,10 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,6 +24,8 @@ const PostScreen = ({ navigation, route }) => {
     description: '',
     location: route.params?.placeName || '',
   });
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const pickImage = async () => {
     try {
@@ -49,6 +55,8 @@ const PostScreen = ({ navigation, route }) => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       await writePostToDB({ ...formData, owner: "DummyUserId", userImage: "https://placedog.net/301/301", userName: "John"}, image, "posts");
       Alert.alert('Success', 'Post created successfully!', [
@@ -56,10 +64,18 @@ const PostScreen = ({ navigation, route }) => {
       ]);
     } catch (error) {
       Alert.alert('Error', 'Failed to create post');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         {/* Image Preview Section */}
@@ -106,15 +122,19 @@ const PostScreen = ({ navigation, route }) => {
             multiline
           />
           <TouchableOpacity 
-            style={[styles.postButton, !image && styles.disabledButton]}
+            style={[styles.postButton, isLoading && styles.disabledButton]}
             onPress={handlePost}
-            disabled={!image}
+            disabled={isLoading}
           >
-            <Text style={styles.postButtonText}>Post</Text>
+            <Text style={styles.postButtonText}>
+              {isLoading ? 'Posting...' : 'Post'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
+    </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
