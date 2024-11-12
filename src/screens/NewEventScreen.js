@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { writeEventToDB, updateEventToDB } from '../services/firebaseHelper';
 
-const NewEventScreen = ({ navigation }) => {
+const NewEventScreen = ({ navigation, route }) => {
   const [eventData, setEventData] = useState({
     title: '',
     description: '',
@@ -20,21 +21,36 @@ const NewEventScreen = ({ navigation }) => {
     reminder: true,
   });
 
+  useEffect(() => {
+    if (route.params?.event) {
+      navigation.setOptions({ title: 'Edit Event' });
+      setEventData(route.params.event)
+    }
+  }, []);
+
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!eventData.title || !eventData.location) {
       Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
 
-    // TODO: Save event to database
-    Alert.alert('Success', 'Event created successfully!', [
-      {
-        text: 'OK',
-        onPress: () => navigation.goBack()
+    try {
+      if (route.params?.event) {
+        await updateEventToDB(route.params.event.id, { ...eventData, owner: "DummyUserId", userName: "John"});
+        Alert.alert('Success', 'Event updated successfully!', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
+      } else {
+        await writeEventToDB({ ...eventData, owner: "DummyUserId", userName: "John"});
+        Alert.alert('Success', 'Event created successfully!', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
       }
-    ]);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
   };
 
   const onDateChange = (event, selectedDate) => {

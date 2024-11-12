@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import EventCard from '../components/EventCard';
+import { db } from '../services/firebaseSetup';
+import { onSnapshot, collection, query, where } from 'firebase/firestore';
+import { deleteEventFromDB } from '../services/firebaseHelper';
 
 // Configure notifications
 Notifications.setNotificationHandler({
@@ -14,21 +17,28 @@ Notifications.setNotificationHandler({
 
 const EventsScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
-
+  const userId = 'DummyUserId'
   useEffect(() => {
-    // TODO: Fetch events from Firebase
-    // For now, using dummy data
-    setEvents([
-      {
-        id: '1',
-        title: 'Food Festival',
-        description: 'Annual street food festival',
-        date: new Date('2024-10-15'),
-        location: 'Central Park',
-        reminder: true,
-      },
-      // Add more dummy events
-    ]);
+    const q = query(collection(db, 'events'), where('owner', '==', userId));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let eventsArray = [];
+      snapshot.forEach((docSnapshot) => {
+        const data = docSnapshot.data();
+        eventsArray.push({
+          id: docSnapshot.id,
+          title: data.title,
+          description: data.description,
+          date: data.date.toDate(),
+          location: data.location,
+          reminder: true});
+      });
+      setEvents(eventsArray);
+    },
+    (error) => {
+      console.log("Error in onSnapshot: ", error);
+      Alert.alert(error.message);
+    });
+    return () => unsubscribe()
   }, []);
 
   const scheduleNotification = async (event) => {
@@ -50,12 +60,28 @@ const EventsScreen = ({ navigation }) => {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    // TODO: Delete from Firebase
-    setEvents(events.filter(event => event.id !== eventId));
+    Alert.alert(
+      'Delete Event',
+      'Are you sure you want to delete this event?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            await deleteEventFromDB(eventId);
+            setEvents(events.filter(event => event.id !== eventId));
+          }
+        }
+      ],
+      { cancelable: false }
+    )
   };
 
   const handleEditEvent = (event) => {
-    navigation.navigate('EditEvent', { event });
+    navigation.navigate('NewEvent', {event});
   };
 
   return (

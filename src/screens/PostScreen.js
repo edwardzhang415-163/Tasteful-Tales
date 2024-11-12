@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
+import { writePostToDB } from '../services/firebaseHelper';
 
 const PostScreen = ({ navigation, route }) => {
   const [image, setImage] = useState(route.params?.image || null);
@@ -49,7 +50,7 @@ const PostScreen = ({ navigation, route }) => {
     }
 
     try {
-      // TODO: Implement post creation with Firebase
+      await writePostToDB({ ...formData, owner: "DummyUserId", userImage: "https://placedog.net/301/301", userName: "John"}, image, "posts");
       Alert.alert('Success', 'Post created successfully!', [
         { text: 'OK', onPress: () => navigation.navigate('Feed') }
       ]);

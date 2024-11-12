@@ -11,25 +11,62 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { db } from '../services/firebaseSetup';
+import { query, collection, where, onSnapshot } from 'firebase/firestore';
+import { getDoc, doc } from 'firebase/firestore';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const [userProfile, setUserProfile] = useState({
-    displayName: 'John Doe',
-    email: 'john@example.com',
-    bio: 'Food enthusiast and amateur chef 🍳',
-    profileImage: 'https://placekitten.com/200/200',
-    postsCount: 42,
-    followersCount: 1234,
-    followingCount: 567,
+    // displayName: 'John Doe',
+    // email: 'john@example.com',
+    // bio: 'Food enthusiast and amateur chef 🍳',
+    // profileImage: 'https://placedog.net/301/301',
+    // postsCount: 42,
+    // followersCount: 0,
+    // followingCount: 0,
   });
   const [refreshing, setRefreshing] = useState(false);
-  const [userPosts, setUserPosts] = useState([
-    // Dummy data
-    { id: 1, imageUrl: 'https://placekitten.com/300/300' },
-    { id: 2, imageUrl: 'https://placekitten.com/301/301' },
-    { id: 3, imageUrl: 'https://placekitten.com/302/302' },
-    // Add more dummy posts
-  ]);
+  const [userPosts, setUserPosts] = useState([]);
+  const userId = 'DummyUserId'; //  Needs to be replaced with the actual user ID
+
+
+  const fetchUserPosts = async () => {
+    const q = query(collection(db, 'posts'), where('owner', '==', userId));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let postsArray = [];
+      snapshot.forEach((docSnapshot) => {
+        postsArray.push({ imageUrl: docSnapshot.data().image, id: docSnapshot.id });
+      });
+      setUserPosts(postsArray);
+    },
+      (error) => {
+        console.log("Error in onSnapshot: ", error);
+        Alert.alert(error.message);
+      });
+    return () => unsubscribe()
+  };
+
+  const fetchUserProfile = async () => {
+    try {
+      const userRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setUserProfile(userDoc.data());
+        return userData;
+      } else {
+        console.error('No user found with the provided ID.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchUserPosts();
+    fetchUserProfile();
+  }, []);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -40,14 +77,13 @@ const ProfileScreen = () => {
   }, []);
 
   const handleEditProfile = () => {
-    // TODO: Navigate to edit profile screen
-    Alert.alert('Edit Profile', 'Edit profile functionality coming soon!');
+    navigation.navigate('EditProfile', {... userProfile, userId: userId, onProfileUpdate: () => fetchUserProfile()});
   };
 
   const handleChangeProfilePicture = async () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
+
       if (permissionResult.granted === false) {
         Alert.alert('Permission Required', 'Please allow access to your photo library');
         return;
@@ -73,14 +109,14 @@ const ProfileScreen = () => {
   };
 
   return (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.profileImageContainer}
           onPress={handleChangeProfilePicture}
         >
@@ -112,7 +148,7 @@ const ProfileScreen = () => {
       <View style={styles.bioSection}>
         <Text style={styles.displayName}>{userProfile.displayName}</Text>
         <Text style={styles.bio}>{userProfile.bio}</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.editButton}
           onPress={handleEditProfile}
         >
@@ -122,8 +158,8 @@ const ProfileScreen = () => {
 
       <View style={styles.postsGrid}>
         {userPosts.map((post) => (
-          <TouchableOpacity 
-            key={post.id} 
+          <TouchableOpacity
+            key={post.id}
             style={styles.postThumbnail}
           >
             <Image
