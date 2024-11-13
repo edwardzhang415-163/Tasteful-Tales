@@ -77,31 +77,41 @@ Key Features:
 - **Read:**
     - Users can browse the feed to see food stories shared by themselves and others.
     - Users can view details of posts, including photos, title, locations.
+    - <img src="assets/Feed.png" alt="feed" width="300"/>
+
 
 ### **2. Map Page**
 
 - will be implemented in iteration 2
+- <img src="assets/Map.png" alt="mao" width="300"/>
 
 ### **3. Post Page**
 
 - **Create:**
     - Users can create new food posts by uploading photos, adding descriptions, and selecting the location of the meal.
-### **4. Events Page**
+    - <img src="assets/Post.png" alt="post" width="300"/>
 
+### **4. Events Page**
 - **Create:**
     - Users can create new events, such as food festivals, restaurant openings, or cooking plans. Title, Location, Description and Schedule can be added to the events.
+    - <img src="assets/NewEvent.png" alt="new event" width="300"/>
 - **Read:**
     - Users can browse upcoming events in list view, seeing details like dates, descriptions, and locations.
+    - <img src="assets/Events.png" alt="events" width="300"/>
 - **Update:**
     - Users can edit their events changing dates, descriptions, title or location, the update will be made based on the original information of the event.
+    - <img src="assets/UpdateEvent.png" alt="update event" width="300"/>
 - **Delete:**
     - Users can delete their events, removing them from their event list, with an alert of comfirmation.
+    - <img src="assets/DeleteEvent.png" alt="delete event" width="300"/>
 
 ### **5. Profile Page**
 - **Read:**
     - Users can view their own profile, including their profile photo, account infomation and their post images.
+    - <img src="assets/Profile.png" alt="profile" width="300"/>
 - **Update:**
     - Users can edit their profiles, updating details like their name, email, bio and profile photo.
+    - <img src="assets/EditProfile.png" alt="edit profile" width="250"/>  <img src="assets/EditProfileImage.png" alt="edit profile image" width="250"/>
     
 
 ## data model
@@ -109,54 +119,41 @@ Key Features:
 1. Users Collection
 
 ```
+CRUD operations: Create, Read, Update
 users/{userId}
 - email: string
 - displayName: string
 - bio: string
 - profileImage: string
-- dietaryPreferences: array
-- favoriteRestaurants: array
-- savedRecipes: array
-- following: array
-- followers: array
-- createdAt: timestamp
-- lastActive: timestamp
+- postsCount: int
+- followersCount: int
+- followingCount: int
 
 ```
 
 2. Posts Collection
 
 ```
+CRUD operations: Create, Read
 posts/{postId}
-- userId: string
-- type: string (recipe/restaurant/general)
-- images: array
-- caption: string
-- location: geopoint
-- placeName: string
-- tags: array
-- likes: array
-- comments: subcollection
-- createdAt: timestamp
-- updatedAt: timestamp
+- owner: string
+- image: String
+- title: string
+- location: string
+- description: string
+- createdDate: timestamp
 
 ```
 
 3. Events Collection
 
 ```
+CRUD operations: Create, Read, Update, Delete
 events/{eventId}
-- userId: string
+- owner: string
 - title: string
 - description: string
-- type: string (opening/tasting/cooking)
 - date: timestamp
-- location: geopoint
-- placeName: string
-- reminder: boolean
-- reminderTime: timestamp
-- attendees: array
-- status: string
-- createdAt: timestamp
+- location: string
 
 ```
