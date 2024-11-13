@@ -8,7 +8,7 @@ const EventCard = ({ event, onDelete, onEdit }) => {
   };
 
   return (
-    <View style={styles.card}>
+    <View key={event.id} style={styles.card}>
       <View style={styles.header}>
         <Text style={styles.title}>{event.title}</Text>
         <View style={styles.actions}>

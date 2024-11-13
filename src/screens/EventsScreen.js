@@ -18,6 +18,7 @@ Notifications.setNotificationHandler({
 const EventsScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
   const userId = 'DummyUserId'
+
   useEffect(() => {
     const q = query(collection(db, 'events'), where('owner', '==', userId));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -32,7 +33,9 @@ const EventsScreen = ({ navigation }) => {
           location: data.location,
           reminder: true});
       });
-      setEvents(eventsArray);
+      const sortedEvents = eventsArray
+          .sort((a, b) => a.date - b.date);
+      setEvents(sortedEvents);
     },
     (error) => {
       console.log("Error in onSnapshot: ", error);
@@ -99,7 +102,9 @@ const EventsScreen = ({ navigation }) => {
             onEdit={() => handleEditEvent(item)}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => {
+          return item.id;
+        }}
         contentContainerStyle={styles.list}
       />
     </View>

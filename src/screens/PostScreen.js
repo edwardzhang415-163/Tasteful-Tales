@@ -33,7 +33,7 @@ const PostScreen = ({ navigation, route }) => {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
-        quality: 1,
+        quality: 0,
       });
 
       if (!result.canceled) {
@@ -65,6 +65,8 @@ const PostScreen = ({ navigation, route }) => {
     } catch (error) {
       Alert.alert('Error', 'Failed to create post');
     } finally {
+      setFormData({ title: '', description: '', location: '' });
+      setImage(null);
       setIsLoading(false);
     }
   };

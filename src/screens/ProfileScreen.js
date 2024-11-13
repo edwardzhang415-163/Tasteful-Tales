@@ -12,8 +12,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db } from '../services/firebaseSetup';
-import { query, collection, where, onSnapshot } from 'firebase/firestore';
-import { getDoc, doc } from 'firebase/firestore';
+import { query, collection, where, onSnapshot, updateDoc, getDoc, doc } from 'firebase/firestore';
+import { uploadImageData } from '../services/firebaseHelper';
 
 const ProfileScreen = ({ navigation }) => {
   const [userProfile, setUserProfile] = useState({
@@ -93,15 +93,24 @@ const ProfileScreen = ({ navigation }) => {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 1,
+        quality: 0,
       });
 
       if (!result.canceled) {
-        // TODO: Upload image to Firebase Storage
-        setUserProfile(prev => ({
-          ...prev,
-          profileImage: result.assets[0].uri
-        }));
+        try {
+          // set profile image in local state first, if it fails, revert back
+          setUserProfile(prev => ({
+            ...prev,
+            profileImage: result.assets[0].uri
+          }));
+          const userRef = doc(db, 'users', userId);
+          await updateDoc(userRef, {
+            profileImage: await uploadImageData(result.assets[0].uri)
+          });
+        } catch (error) {
+          console.error("Error updating profile image:", error);
+          Alert.alert('Error', 'Failed to update profile picture');
+        }
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to update profile picture');
