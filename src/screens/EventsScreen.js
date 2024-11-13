@@ -18,6 +18,7 @@ Notifications.setNotificationHandler({
 const EventsScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
   const userId = 'DummyUserId'
+
   useEffect(() => {
     const q = query(collection(db, 'events'), where('owner', '==', userId));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -99,7 +100,9 @@ const EventsScreen = ({ navigation }) => {
             onEdit={() => handleEditEvent(item)}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => {
+          return item.id;
+        }}
         contentContainerStyle={styles.list}
       />
     </View>

@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const FeedCard = ({ post }) => {
   return (
-    <View style={styles.card}>
+    <View key={post.postId} style={styles.card}>
       <View style={styles.header}>
         <Image 
           source={{ uri: post.userImage }} 

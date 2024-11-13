@@ -96,7 +96,9 @@ const FeedScreen = ({ navigation }) => {
             onPress={() => handlePostPress(item)}
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => {
+          return item.postId;
+        }}
         refreshing={refreshing}
         onRefresh={handleRefresh}
         contentContainerStyle={styles.list}
