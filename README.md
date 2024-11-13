@@ -39,6 +39,7 @@ Key Features:
 - Integrated basic map feature
 - Implemented image upload functionality
 - Implemented navigation bar
+- Implemented crud operations for corresponding screens
 
 #### Zecheng Zhou
 - Implemented main event functionality
