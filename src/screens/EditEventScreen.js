@@ -6,10 +6,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  LogBox,
   Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
+LogBox.ignoreLogs([ 'Non-serializable values were found in the navigation state', ]);
 
 const EditEventScreen = ({ navigation, route }) => {
   const { eventId } = route.params;

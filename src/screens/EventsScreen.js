@@ -33,7 +33,9 @@ const EventsScreen = ({ navigation }) => {
           location: data.location,
           reminder: true});
       });
-      setEvents(eventsArray);
+      const sortedEvents = eventsArray
+          .sort((a, b) => a.date - b.date);
+      setEvents(sortedEvents);
     },
     (error) => {
       console.log("Error in onSnapshot: ", error);
