@@ -21,6 +21,8 @@ const FeedScreen = ({ navigation }) => {
       const unsubscribe = onSnapshot(collection(db, 'posts'), async (postsSnapshot) => {
         if (postsSnapshot.empty) {
           console.log("No posts found in the 'posts' collection.");
+          setPosts([]);
+          setLoading(false);
           return;
         }
         // Process each post document and fetch user info
@@ -28,6 +30,8 @@ const FeedScreen = ({ navigation }) => {
           postsSnapshot.docs.map(async (postDoc) => {
             if (!postDoc.exists) {
               console.warn(`Post document does not exist: ${postDoc.id}`);
+              setPosts([]);
+              setLoading(false);
               return null;
             }
 
