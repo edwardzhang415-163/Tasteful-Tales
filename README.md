@@ -41,6 +41,10 @@ Key Features:
 - Implemented navigation bar
 
 #### Zecheng Zhou
+- Implemented main event functionality
+- Integrated the firestore database
+- Integrated the firebase image storage
+- Developed the profile features
 
 ## UI Sketches
 
@@ -54,17 +58,18 @@ Key Features:
     - Camera viewfinder/photo preview
     - Location selector
     - Text description input box
-4. Events Page:
-    - Calendar view
-    - Add event button
-    - Edit event button
+4. Events Page (Zecheng Zhou):
+    - List view of Events
+    - Add event function
+    - Edit event function
     - Event list display
-    - Reminder setting options
-5. Profile Page:
+5. Profile Page (Zecheng Zhou):
     - Personal profile
     - Account information
+    - updating profile info
     
-    
+
+
 **CRUD operations for each page:**
 
 ### **1. Main Page (Feed)**
@@ -84,19 +89,19 @@ Key Features:
 ### **4. Events Page**
 
 - **Create:**
-    - Users can create new events, such as food festivals, restaurant openings, or cooking plans.
+    - Users can create new events, such as food festivals, restaurant openings, or cooking plans. Title, Location, Description and Schedule can be added to the events.
 - **Read:**
-    - Users can browse upcoming events in a calendar view or list format, seeing details like dates, descriptions, and locations.
+    - Users can browse upcoming events in list view, seeing details like dates, descriptions, and locations.
 - **Update:**
-    - Users can edit their events, changing dates, times, descriptions, or reminders.
+    - Users can edit their events changing dates, descriptions, title or location, the update will be made based on the original information of the event.
 - **Delete:**
-    - Users can delete their events, removing them from the calendar and reminders.
+    - Users can delete their events, removing them from their event list, with an alert of comfirmation.
 
 ### **5. Profile Page**
 - **Read:**
-    - Users can view their own profile, including their profile photo and account infomation.
+    - Users can view their own profile, including their profile photo, account infomation and their post images.
 - **Update:**
-    - Users can edit their profiles, updating details like their bio, profile photo, preferences, or saved collections.
+    - Users can edit their profiles, updating details like their name, email, bio and profile photo.
     
 
 ## data model
@@ -104,7 +109,6 @@ Key Features:
 1. Users Collection
 
 ```
-Copy
 users/{userId}
 - email: string
 - displayName: string
@@ -120,10 +124,9 @@ users/{userId}
 
 ```
 
-1. Posts Collection
+2. Posts Collection
 
 ```
-Copy
 posts/{postId}
 - userId: string
 - type: string (recipe/restaurant/general)
@@ -139,10 +142,9 @@ posts/{postId}
 
 ```
 
-1. Events Collection
+3. Events Collection
 
 ```
-Copy
 events/{eventId}
 - userId: string
 - title: string
