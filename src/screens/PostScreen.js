@@ -26,14 +26,50 @@ const PostScreen = ({ navigation, route }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-
   const pickImage = async () => {
     try {
-      const result = await ImagePicker.launchImageLibraryAsync({
+      const options = {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0,
+      };
+
+      const result = await new Promise((resolve, reject) => {
+        Alert.alert(
+          'Select Image',
+          'Choose an option',
+          [
+            {
+              text: 'Camera',
+              onPress: async () => {
+                try {
+                  const cameraResult = await ImagePicker.launchCameraAsync(options);
+                  resolve(cameraResult);
+                } catch (error) {
+                  reject(error);
+                }
+              },
+            },
+            {
+              text: 'Library',
+              onPress: async () => {
+                try {
+                  const libraryResult = await ImagePicker.launchImageLibraryAsync(options);
+                  resolve(libraryResult);
+                } catch (error) {
+                  reject(error);
+                }
+              },
+            },
+            {
+              text: 'Cancel',
+              onPress: () => resolve({ canceled: true }),
+              style: 'cancel',
+            },
+          ],
+          { cancelable: true }
+        );
       });
 
       if (!result.canceled) {
