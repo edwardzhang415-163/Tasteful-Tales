@@ -28,8 +28,7 @@ const PostScreen = ({ navigation, route }) => {
     const { name, address } = restaurant;
     return `📍 ${name}, ${address}`;
   };
-
-  // Initialize states
+  
   const [image, setImage] = useState(route.params?.image || null);
   const [formData, setFormData] = useState({
     title: '',

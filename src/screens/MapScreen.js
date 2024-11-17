@@ -8,8 +8,6 @@ const GOOGLE_PLACES_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
 
 const MapScreen = ({ navigation }) => {
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [selectedMarker, setSelectedMarker] = useState(null);
   const [nearbyRestaurants, setNearbyRestaurants] = useState([]);
 
   useEffect(() => {
