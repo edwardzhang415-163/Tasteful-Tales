@@ -20,23 +20,29 @@ import { writePostToDB } from '../services/firebaseHelper';
 
 
 const WEATHER_API_KEY = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
-console.log(WEATHER_API_KEY);
 
 const PostScreen = ({ navigation, route }) => {
+  const restaurant = route.params?.restaurant;
+
+  const formatRestaurantInfo = (restaurant) => {
+    const { name, address} = restaurant;
+    return `📍 ${name}, ${address}`;
+  };
   const [image, setImage] = useState(route.params?.image || null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    location: route.params?.placeName || '',
+    location: restaurant ? formatRestaurantInfo(restaurant) : '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
-
+  console.log('formData', formData);
+  
   // Check for required permissions when component mounts
   useEffect(() => {
     checkPermissions();
   }, []);
-
+  
   const checkPermissions = async () => {
     try {
       // Request camera permission
@@ -280,7 +286,7 @@ const PostScreen = ({ navigation, route }) => {
               <View style={styles.locationInputContainer}>
                 <TextInput
                   style={[styles.input, styles.locationInput]}
-                  placeholder="Location and weather"
+                  placeholder={formData.location ? formData.location : "Location and weather"}
                   value={formData.location}
                   onChangeText={(text) => setFormData(prev => ({ ...prev, location: text }))}
                 />
