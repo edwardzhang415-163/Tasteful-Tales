@@ -24,22 +24,85 @@ Key Features:
 ### Completed Features
 
 - Main Feed with Post Display
-- Create New Posts with Images
+- Create New Posts with Images and Restaurant Location
 - Create New Events
 - Event Calendar View
-- Map Integration
+- Map Integration with Restaurant Search
 - Basic Profile Management
+
+### Iteration 2 Updates
+
+#### New Functionalities
+
+1. **Location Services** ✅
+   - Real-time location tracking
+   - Reverse geocoding for address lookup
+   - Restaurant proximity search
+   - Map-based restaurant selection
+
+2. **External API Integration** ✅
+   - Google Places API
+     - Nearby restaurant search
+     - Restaurant details and ratings
+     - Geographical coordinates
+   - OpenWeather API
+     - Current weather conditions
+     - Temperature data
+     - Location-based weather updates
+
+3. **Camera/Gallery Integration** ❌
+     - Planned for next iteration
+     - Photo capture from camera
+     - Image selection from gallery
+     - Image preview and management
+     - Upload functionality
+
+4. **Authentication** ❌
+   - Planned for next iteration
+   - Currently using dummy user data
+
+5. **Notifications** ❌
+   - Planned for next iteration
+   - Basic UI elements in place
+
+### Implementation Progress
+
+✅ Completed in Iteration 2:
+- Location services
+- External API integration
+- Map interface
+- Weather integration
+- Restaurant search and selection
+
+🔄 In Progress:
+- Authentication system
+- Notification system
+- Camera/Gallery functionality
 
 ### Team Member Contributions
 
 #### Jiale Zhang
 
-- Implemented main feed functionality
-- Developed post creation system
-- Integrated basic map feature
-- Implemented image upload functionality
-- Implemented navigation bar
-- Implemented crud operations for corresponding screens
+-  **Core Features:**
+  - Implemented main feed functionality
+  - Developed post creation system
+  - Integrated map functionality with Google Places API
+  - Implemented weather service with OpenWeather API
+  - Developed location-based services
+
+- **Technical Implementations:**
+  - External API integrations:
+    - Google Places API for restaurant search
+    - OpenWeather API for weather data
+  - Location services:
+    - Real-time tracking
+    - Reverse geocoding
+    - Restaurant proximity search
+  - Navigation system:
+    - Screen navigation
+    - Data passing between screens
+    - Parameter handling
+
 
 #### Zecheng Zhou
 - Implemented main event functionality
@@ -54,7 +117,13 @@ Key Features:
     - Middle: Scrollable photo card stream
     - Bottom: Navigation bar (Feed, Map, Post, Events, Profile)
 2. Map Page(Jiale Zhang):
-    - will be implemented in iteration 2
+    - **Read:**
+      - Users can view nearby restaurants on the map
+      - Users can see restaurant details including name, rating, and open status
+    - **Create:**
+      - Users can select a restaurant to create a new post
+      - Integration with Google Places API for restaurant data
+    - <img src="assets/Map.png" alt="map" width="300"/>
 3. Post Page(Jiale Zhang):
     - Camera viewfinder/photo preview
     - Location selector
@@ -83,14 +152,24 @@ Key Features:
 
 ### **2. Map Page**
 
-- will be implemented in iteration 2
-- <img src="assets/Map.png" alt="mao" width="300"/>
+- **Read:**
+  - Users can view nearby restaurants on the map
+  - Users can see restaurant details including name, rating, and open status
+- **Create:**
+  - Users can select a restaurant to create a new post
+  - Integration with Google Places API for restaurant data
+- <img src="assets/Map.png" alt="map" width="300"/>
 
 ### **3. Post Page**
 
 - **Create:**
-    - Users can create new food posts by uploading photos, adding descriptions, and selecting the location of the meal.
-    - <img src="assets/Post.png" alt="post" width="300"/>
+  - Users can create new food posts by:
+    - Uploading photos from camera or gallery
+    - Adding title and descriptions
+    - Selecting restaurant location from map
+    - Getting current location with weather information
+  - Restaurant information is automatically formatted when selected from map
+- <img src="assets/Post.png" alt="post" width="300"/>
 
 ### **4. Events Page**
 - **Create:**
