@@ -15,9 +15,22 @@ Key Features:
 • Schedule reminders for food events, restaurant openings, or cooking plans
 • browse the posts of other food enthusiasts and discover their culinary adventures
 
-## Slogan
 
+
+### Slogan
 "Every meal tells a story - Share yours with Tasteful Tales"
+
+### API Keys Required
+1. **Google Places API**
+   - Create a project in Google Cloud Console
+   - Enable Places API
+   - Generate API key
+   - Add to `.env` as `EXPO_PUBLIC_GOOGLE_PLACES_API_KEY`
+
+2. **OpenWeather API**
+   - Register at OpenWeather
+   - Generate API key
+   - Add to `.env` as `EXPO_PUBLIC_WEATHER_API_KEY`
 
 ## Current Implementation Status
 
