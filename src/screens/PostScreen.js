@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -26,15 +26,47 @@ const PostScreen = ({ navigation, route }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check for required permissions when component mounts
+  useEffect(() => {
+    (async () => {
+      // Request camera permission
+      const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
+      if (cameraPermission.status !== 'granted') {
+        Alert.alert(
+          'Permission Required',
+          'Camera access is required to take photos.',
+          [{ text: 'OK' }]
+        );
+      }
+
+      // Request photo library permission
+      const libraryPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (libraryPermission.status !== 'granted') {
+        Alert.alert(
+          'Permission Required',
+          'Photo library access is required to select photos.',
+          [{ text: 'OK' }]
+        );
+      }
+    })();
+  }, []);
+
+  // Handle image selection from camera or library
   const pickImage = async () => {
     try {
+      // Check current permission status
+      const cameraPermission = await ImagePicker.getCameraPermissionsAsync();
+      const libraryPermission = await ImagePicker.getMediaLibraryPermissionsAsync();
+
+      // Configure image picker options
       const options = {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
-        quality: 0,
+        quality: 0.5, // Adjust quality for better performance
       };
 
+      // Show action sheet for image source selection
       const result = await new Promise((resolve, reject) => {
         Alert.alert(
           'Select Image',
@@ -44,6 +76,15 @@ const PostScreen = ({ navigation, route }) => {
               text: 'Camera',
               onPress: async () => {
                 try {
+                  // Verify camera permission before proceeding
+                  if (!cameraPermission.granted) {
+                    const newPermission = await ImagePicker.requestCameraPermissionsAsync();
+                    if (!newPermission.granted) {
+                      Alert.alert('Permission Required', 'Camera access is required to take photos.');
+                      return;
+                    }
+                  }
+                  // Launch camera if permission granted
                   const cameraResult = await ImagePicker.launchCameraAsync(options);
                   resolve(cameraResult);
                 } catch (error) {
@@ -55,6 +96,15 @@ const PostScreen = ({ navigation, route }) => {
               text: 'Library',
               onPress: async () => {
                 try {
+                  // Verify library permission before proceeding
+                  if (!libraryPermission.granted) {
+                    const newPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                    if (!newPermission.granted) {
+                      Alert.alert('Permission Required', 'Photo library access is required to select photos.');
+                      return;
+                    }
+                  }
+                  // Launch photo library if permission granted
                   const libraryResult = await ImagePicker.launchImageLibraryAsync(options);
                   resolve(libraryResult);
                 } catch (error) {
@@ -72,11 +122,12 @@ const PostScreen = ({ navigation, route }) => {
         );
       });
 
+      // Update state with selected image if not canceled
       if (!result.canceled) {
         setImage(result.assets[0].uri);
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to pick image');
+      Alert.alert('Error', 'Failed to pick image: ' + error.message);
     }
   };
 

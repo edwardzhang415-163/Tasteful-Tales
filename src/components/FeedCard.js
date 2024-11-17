@@ -18,18 +18,6 @@ const FeedCard = ({ post }) => {
         style={styles.mainImage} 
       />
       
-      {/* <View style={styles.actions}>
-        <TouchableOpacity>
-          <Ionicons name="heart-outline" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="chatbubble-outline" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="location-outline" size={24} color="black" />
-        </TouchableOpacity>
-      </View> */}
-      
       <View style={styles.content}>
         <Text style={styles.caption}>{post.title}</Text>
         <Text style={styles.location}>{post.location}</Text>
