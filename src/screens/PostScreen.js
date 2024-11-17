@@ -14,8 +14,13 @@ import {
   Platform
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { writePostToDB } from '../services/firebaseHelper';
+
+
+const WEATHER_API_KEY = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
+console.log(WEATHER_API_KEY);
 
 const PostScreen = ({ navigation, route }) => {
   const [image, setImage] = useState(route.params?.image || null);
@@ -25,10 +30,15 @@ const PostScreen = ({ navigation, route }) => {
     location: route.params?.placeName || '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
 
   // Check for required permissions when component mounts
   useEffect(() => {
-    (async () => {
+    checkPermissions();
+  }, []);
+
+  const checkPermissions = async () => {
+    try {
       // Request camera permission
       const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
       if (cameraPermission.status !== 'granted') {
@@ -48,8 +58,76 @@ const PostScreen = ({ navigation, route }) => {
           [{ text: 'OK' }]
         );
       }
-    })();
-  }, []);
+
+      // Request location permission
+      const locationPermission = await Location.requestForegroundPermissionsAsync();
+      if (locationPermission.status !== 'granted') {
+        Alert.alert(
+          'Permission Required',
+          'Location access is required for weather information.',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      console.error('Error checking permissions:', error);
+    }
+  };
+
+  // Function to get current location and weather
+  const getCurrentLocation = async () => {
+    setLocationLoading(true);
+    try {
+      // Get current location
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+
+      // Get location details using reverse geocoding
+      const [locationDetails] = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude
+      });
+
+      // Validate API key
+      if (!WEATHER_API_KEY) {
+        throw new Error('Weather API key is not configured');
+      }
+
+      // Get weather data
+      const weatherResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=metric`
+      );
+
+      if (!weatherResponse.ok) {
+        throw new Error('Weather API request failed');
+      }
+
+      const weatherData = await weatherResponse.json();
+
+      // Format location and weather string
+      const locationString = formatLocationString(locationDetails, weatherData);
+      
+      // Update form data with location string
+      setFormData(prev => ({
+        ...prev,
+        location: locationString
+      }));
+
+    } catch (error) {
+      console.error('Error getting location:', error);
+      Alert.alert('Error', error.message || 'Failed to get location information');
+    } finally {
+      setLocationLoading(false);
+    }
+  };
+
+  // Helper function to format location string
+  const formatLocationString = (locationDetails, weatherData) => {
+    const city = locationDetails.city || locationDetails.district || locationDetails.subregion;
+    const temperature = Math.round(weatherData.main.temp);
+    const weather = weatherData.weather[0].main;
+    
+    return `📍 ${city} • ${temperature}°C • ${weather}`;
+  };
 
   // Handle image selection from camera or library
   const pickImage = async () => {
@@ -164,65 +242,82 @@ const PostScreen = ({ navigation, route }) => {
       style={{ flex: 1 }}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
-        {/* Image Preview Section */}
-        <View style={styles.imageSection}>
-          {image ? (
-            <View style={styles.imagePreviewContainer}>
-              <Image source={{ uri: image }} style={styles.imagePreview} />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView style={styles.container}>
+          <View style={styles.content}>
+            {/* Image Preview Section */}
+            <View style={styles.imageSection}>
+              {image ? (
+                <View style={styles.imagePreviewContainer}>
+                  <Image source={{ uri: image }} style={styles.imagePreview} />
+                  <TouchableOpacity 
+                    style={styles.changeImageButton}
+                    onPress={() => setImage(null)}>
+                    <Ionicons name="close-circle" size={24} color="white" />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity 
+                  style={styles.imageButton} 
+                  onPress={pickImage}
+                >
+                  <Ionicons name="images" size={32} color="#FF6B6B" />
+                  <Text style={styles.imageButtonText}>Choose from Gallery</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Form Section */}
+            <View style={styles.formSection}>
+              <TextInput
+                style={styles.input}
+                placeholder="Title"
+                value={formData.title}
+                onChangeText={(text) => setFormData(prev => ({ ...prev, title: text }))}
+              />
+              
+              {/* Modified Location Input */}
+              <View style={styles.locationInputContainer}>
+                <TextInput
+                  style={[styles.input, styles.locationInput]}
+                  placeholder="Location and weather"
+                  value={formData.location}
+                  onChangeText={(text) => setFormData(prev => ({ ...prev, location: text }))}
+                />
+                <TouchableOpacity 
+                  style={styles.locationButton}
+                  onPress={getCurrentLocation}
+                  disabled={locationLoading}
+                >
+                  <Ionicons 
+                    name="location" 
+                    size={24} 
+                    color={locationLoading ? "#999" : "#FF6B6B"} 
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <TextInput
+                style={[styles.input, styles.descriptionInput]}
+                placeholder="Description"
+                value={formData.description}
+                onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
+                multiline
+              />
+              
               <TouchableOpacity 
-                style={styles.changeImageButton}
-                onPress={() => setImage(null)}>
-                <Ionicons name="close-circle" size={24} color="white" />
+                style={[styles.postButton, (isLoading || locationLoading) && styles.disabledButton]}
+                onPress={handlePost}
+                disabled={isLoading || locationLoading}
+              >
+                <Text style={styles.postButtonText}>
+                  {isLoading ? 'Posting...' : 'Post'}
+                </Text>
               </TouchableOpacity>
             </View>
-          ) : (
-            <TouchableOpacity 
-              style={styles.imageButton} 
-              onPress={pickImage}
-            >
-              <Ionicons name="images" size={32} color="#FF6B6B" />
-              <Text style={styles.imageButtonText}>Choose from Gallery</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* Form Section */}
-        <View style={styles.formSection}>
-          <TextInput
-            style={styles.input}
-            placeholder="Title"
-            value={formData.title}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, title: text }))}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Location"
-            value={formData.location}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, location: text }))}
-          />
-          <TextInput
-            style={[styles.input, styles.descriptionInput]}
-            placeholder="Description"
-            value={formData.description}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
-            multiline
-          />
-          <TouchableOpacity 
-            style={[styles.postButton, isLoading && styles.disabledButton]}
-            onPress={handlePost}
-            disabled={isLoading}
-          >
-            <Text style={styles.postButtonText}>
-              {isLoading ? 'Posting...' : 'Post'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
-    </TouchableWithoutFeedback>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
@@ -296,6 +391,19 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  locationInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  locationInput: {
+    flex: 1,
+  },
+  locationButton: {
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#f5f5f5',
   },
 });
 
