@@ -22,23 +22,33 @@ import { writePostToDB } from '../services/firebaseHelper';
 const WEATHER_API_KEY = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
 
 const PostScreen = ({ navigation, route }) => {
-  const restaurant = route.params?.restaurant;
-
+  // Format restaurant info helper function
   const formatRestaurantInfo = (restaurant) => {
-    const { name, address} = restaurant;
+    if (!restaurant) return '';
+    const { name, address } = restaurant;
     return `📍 ${name}, ${address}`;
   };
+
+  // Initialize states
   const [image, setImage] = useState(route.params?.image || null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    location: restaurant ? formatRestaurantInfo(restaurant) : '',
+    location: '',  
   });
   const [isLoading, setIsLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
-  console.log('formData', formData);
-  
-  // Check for required permissions when component mounts
+
+  useEffect(() => {
+    const restaurant = route.params?.restaurant;
+    if (restaurant) {
+      setFormData(prev => ({
+        ...prev,
+        location: formatRestaurantInfo(restaurant)
+      }));
+    }
+  }, [route.params?.restaurant]);
+
   useEffect(() => {
     checkPermissions();
   }, []);
