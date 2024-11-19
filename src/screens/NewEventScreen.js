@@ -11,7 +11,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { writeEventToDB, updateEventToDB } from '../services/firebaseHelper';
-import { auth } from '../services/firebaseSetup';
+import { auth, db } from '../services/firebaseSetup';
+import { query, collection, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 const NewEventScreen = ({ navigation, route }) => {
   const [eventData, setEventData] = useState({
@@ -45,6 +46,20 @@ const NewEventScreen = ({ navigation, route }) => {
         ]);
       } else {
         await writeEventToDB({ ...eventData, owner: auth.currentUser.uid, userName: "John"});
+
+        // Count all events by the user
+        const eventsQuery = query(
+          collection(db, 'events'),
+          where('owner', '==', auth.currentUser.uid)
+        );
+        const eventsSnapshot = await getDocs(eventsQuery);
+        const totalEvents = eventsSnapshot.size;
+        // Update user's eventsCount with actual count
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+        await updateDoc(userRef, {
+          eventsCount: totalEvents,
+        });
+
         Alert.alert('Success', 'Event created successfully!', [
           { text: 'OK', onPress: () => navigation.goBack() }
         ]);
