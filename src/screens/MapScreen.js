@@ -40,8 +40,6 @@ const MapScreen = ({ navigation }) => {
         throw new Error('Google Places API key is not configured');
       }
 
-      
-
       const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=1500&type=restaurant&key=${GOOGLE_PLACES_API_KEY}`;
 
       const response = await fetch(url);
@@ -59,7 +57,7 @@ const MapScreen = ({ navigation }) => {
           address: place.vicinity,
           isOpen: place.opening_hours?.open_now,
         }));
-       
+        setNearbyRestaurants([]);
         setNearbyRestaurants(restaurants);
       } else {
         throw new Error(`API returned status: ${data.status}`);
@@ -68,6 +66,26 @@ const MapScreen = ({ navigation }) => {
       Alert.alert('Error', error.message || 'Failed to fetch nearby restaurants');
     }
   };
+
+  const handleRegionChange = async (region) => {
+    try {
+      const newLocation = {
+        coords: {
+          latitude: region.latitude,
+          longitude: region.longitude,
+        }
+      };
+      setLocation(newLocation);
+    } catch (error) {
+      console.error('Error updating location:', error);
+      Alert.alert('Error', 'Failed to update location');
+    }
+  };
+
+  const handleResearchRestaurant = async () => {
+    await fetchNearbyRestaurants(location.coords.latitude, location.coords.longitude);
+  };
+
 
   const handleMarkerPress = (restaurant) => {
     setSelectedMarker(restaurant);
@@ -91,6 +109,7 @@ const MapScreen = ({ navigation }) => {
             latitudeDelta: 0.0122,
             longitudeDelta: 0.0121,
           }}
+          onRegionChangeComplete={handleRegionChange}
         >
           {/* User location marker */}
           <Marker
@@ -140,6 +159,12 @@ const MapScreen = ({ navigation }) => {
         onPress={getCurrentLocation}
       >
         <Ionicons name="refresh" size={24} color="white" />
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.searchButton}
+        onPress={handleResearchRestaurant}
+      >
+        <Ionicons name="search" size={24} color="white" />
       </TouchableOpacity>
     </View>
   );
@@ -200,6 +225,19 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: '#FF6B6B',
     fontStyle: 'italic',
+  },
+  searchButton: {
+    position: 'absolute',
+    top: 20,
+    left: 70,
+    backgroundColor: '#FF6B6B',
+    padding: 10,
+    borderRadius: 20,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });
 
