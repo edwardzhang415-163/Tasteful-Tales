@@ -5,6 +5,7 @@ import EventCard from '../components/EventCard';
 import { db } from '../services/firebaseSetup';
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { deleteEventFromDB } from '../services/firebaseHelper';
+import { auth } from '../services/firebaseSetup';
 
 // Configure notifications
 Notifications.setNotificationHandler({
@@ -17,7 +18,7 @@ Notifications.setNotificationHandler({
 
 const EventsScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
-  const userId = 'DummyUserId'
+  const userId = auth.currentUser.uid;
 
   useEffect(() => {
     const q = query(collection(db, 'events'), where('owner', '==', userId));

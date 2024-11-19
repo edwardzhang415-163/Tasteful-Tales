@@ -1,8 +1,11 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { TouchableOpacity, Text, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
+import { auth } from '../services/firebaseSetup';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { useState, useEffect } from 'react';
 // Import screens
 import FeedScreen from '../screens/FeedScreen';
 import MapScreen from '../screens/MapScreen';
@@ -12,9 +15,31 @@ import ProfileScreen from '../screens/ProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import NewEventScreen from '../screens/NewEventScreen';
 import EditEventScreen from '../screens/EditEventScreen';
+import SignupScreen from '../screens/SignupScreen';
+import LoginScreen from '../screens/LoginScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// Auth Stack Navigator
+const AuthStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen 
+      name="PublicFeed" 
+      component={FeedScreen}
+      options={({ navigation }) => ({
+        title: 'Feed',
+        headerRight: () => (
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={{ color: '#FF6B6B', fontSize: 16 }}>Login for more!</Text>
+          </TouchableOpacity>
+        ),
+      })}
+    />
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Signup" component={SignupScreen} />
+  </Stack.Navigator>
+);
 
 // Individual stack navigators for each tab
 const FeedStack = () => (
@@ -67,12 +92,31 @@ const EventsStack = () => (
   </Stack.Navigator>
 );
 
+// Logout function
+const handleLogout = async () => {
+  try {
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Logout', onPress: async () => await signOut(auth) },
+    ]);
+  } catch (error) {
+    console.error('Error signing out:', error);
+    Alert.alert('Error', 'Failed to sign out');
+  }
+};
+
 const ProfileStack = () => (
   <Stack.Navigator>
     <Stack.Screen 
       name="ProfileHome" 
       component={ProfileScreen}
-      options={{ title: 'Profile' }}
+      options={{ title: 'Profile',
+        headerRight: () => (
+          <TouchableOpacity onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={24} color="#FF6B6B" />
+          </TouchableOpacity>
+        ),
+      }}
     />
     <Stack.Screen 
       name="EditProfile" 
@@ -124,8 +168,25 @@ const TabNavigator = () => (
 
 // Main App Navigator
 const AppNavigator = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+    return unsubscribe;
+  }, []);
+
   return (
-    <TabNavigator />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {user ? (
+        // User is signed in
+        <Stack.Screen name="Main" component={TabNavigator} />
+      ) : (
+        // No user is signed in
+        <Stack.Screen name="Auth" component={AuthStack} />
+      )}
+    </Stack.Navigator>
   );
 };
 

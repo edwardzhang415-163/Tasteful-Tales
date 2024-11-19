@@ -17,6 +17,8 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { writePostToDB } from '../services/firebaseHelper';
+import { auth, db } from '../services/firebaseSetup'; 
+import { doc, updateDoc, getDocs, query, collection, where } from 'firebase/firestore';
 
 
 const WEATHER_API_KEY = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
@@ -238,11 +240,26 @@ const PostScreen = ({ navigation, route }) => {
     setIsLoading(true);
 
     try {
-      await writePostToDB({ ...formData, owner: "DummyUserId", userImage: "https://placedog.net/301/301", userName: "John"}, image, "posts");
+      await writePostToDB({ ...formData, owner: auth.currentUser.uid}, image, "posts");
+
+      // Count all posts by the user
+      const postsQuery = query(
+        collection(db, 'posts'),
+        where('owner', '==', auth.currentUser.uid)
+      );
+      const postsSnapshot = await getDocs(postsQuery);
+      const totalPosts = postsSnapshot.size;
+      // Update user's postsCount with actual count
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userRef, {
+        postsCount: totalPosts,
+      });
+
       Alert.alert('Success', 'Post created successfully!', [
         { text: 'OK', onPress: () => navigation.navigate('Feed') }
       ]);
     } catch (error) {
+      console.error('Error creating post:', error);
       Alert.alert('Error', 'Failed to create post');
     } finally {
       setFormData({ title: '', description: '', location: '' });
