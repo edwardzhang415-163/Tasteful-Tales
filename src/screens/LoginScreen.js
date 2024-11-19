@@ -18,9 +18,8 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.replace('Main');
     } catch (error) {
-      Alert.alert('Error', error.message);
+      Alert.alert('Login Failed', 'please check your email and password and try again.');
     }
   };
 
