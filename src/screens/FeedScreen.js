@@ -8,13 +8,18 @@ import {
 } from 'react-native';
 import FeedCard from '../components/FeedCard';
 import { navigateToPost } from '../navigation/navigationUtils';
-import { db } from '../services/firebaseSetup';
+import { db, auth } from '../services/firebaseSetup';
 import { onSnapshot, collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { Ionicons } from '@expo/vector-icons';
+import { TextInput, TouchableOpacity } from 'react-native';
 
 const FeedScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const user = auth.currentUser;
 
   async function fetchPosts() {
     try {
@@ -72,6 +77,46 @@ const FeedScreen = ({ navigation }) => {
     fetchPosts();
   }, []);
 
+  // Filter posts based on search query
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredPosts(posts);
+    } else {
+      const filtered = posts.filter(post => 
+        post.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredPosts(filtered);
+    }
+  }, [searchQuery, posts]);
+
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+  };
+
+  // Search bar component
+  const SearchBar = () => (
+    <View style={styles.searchContainer}>
+      <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search posts by title..."
+        value={searchQuery}
+        onChangeText={handleSearch}
+        placeholderTextColor="#666"
+        autoFocus={true}
+      />
+      {searchQuery.length > 0 && (
+        <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
+          <Ionicons name="close-circle" size={20} color="#666" />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchPosts();
@@ -92,8 +137,9 @@ const FeedScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {user && <SearchBar />}
       <FlatList
-        data={posts}
+        data={filteredPosts}
         renderItem={({ item }) => (
           <FeedCard
             post={item}
@@ -123,6 +169,36 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 15,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    margin: 15,
+    marginBottom: 5,
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    height: 45,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+    height: '100%',
+  },
+  clearButton: {
+    padding: 5,
   },
 });
 
