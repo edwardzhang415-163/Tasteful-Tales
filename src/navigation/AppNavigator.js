@@ -2,7 +2,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-
+import { auth } from '../services/firebaseSetup';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useState, useEffect } from 'react';
 // Import screens
 import FeedScreen from '../screens/FeedScreen';
 import MapScreen from '../screens/MapScreen';
@@ -17,6 +19,14 @@ import LoginScreen from '../screens/LoginScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// Auth Stack Navigator
+const AuthStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Signup" component={SignupScreen} />
+  </Stack.Navigator>
+);
 
 // Individual stack navigators for each tab
 const FeedStack = () => (
@@ -126,8 +136,25 @@ const TabNavigator = () => (
 
 // Main App Navigator
 const AppNavigator = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+    return unsubscribe;
+  }, []);
+
   return (
-    <TabNavigator />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {user ? (
+        // User is signed in
+        <Stack.Screen name="Main" component={TabNavigator} />
+      ) : (
+        // No user is signed in
+        <Stack.Screen name="Auth" component={AuthStack} />
+      )}
+    </Stack.Navigator>
   );
 };
 
