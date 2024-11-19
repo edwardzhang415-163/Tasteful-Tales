@@ -1,10 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity, Text, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../services/firebaseSetup';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useState, useEffect } from 'react';
 // Import screens
 import FeedScreen from '../screens/FeedScreen';
@@ -92,12 +92,31 @@ const EventsStack = () => (
   </Stack.Navigator>
 );
 
+// Logout function
+const handleLogout = async () => {
+  try {
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Logout', onPress: async () => await signOut(auth) },
+    ]);
+  } catch (error) {
+    console.error('Error signing out:', error);
+    Alert.alert('Error', 'Failed to sign out');
+  }
+};
+
 const ProfileStack = () => (
   <Stack.Navigator>
     <Stack.Screen 
       name="ProfileHome" 
       component={ProfileScreen}
-      options={{ title: 'Profile' }}
+      options={{ title: 'Profile',
+        headerRight: () => (
+          <TouchableOpacity onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={24} color="#FF6B6B" />
+          </TouchableOpacity>
+        ),
+      }}
     />
     <Stack.Screen 
       name="EditProfile" 
