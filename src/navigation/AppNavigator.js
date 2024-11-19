@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../services/firebaseSetup';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -22,7 +23,19 @@ const Tab = createBottomTabNavigator();
 
 // Auth Stack Navigator
 const AuthStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator>
+    <Stack.Screen 
+      name="PublicFeed" 
+      component={FeedScreen}
+      options={({ navigation }) => ({
+        title: 'Feed',
+        headerRight: () => (
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={{ color: '#FF6B6B', fontSize: 16 }}>Login for more!</Text>
+          </TouchableOpacity>
+        ),
+      })}
+    />
     <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="Signup" component={SignupScreen} />
   </Stack.Navigator>
