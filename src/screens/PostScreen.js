@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { writePostToDB } from '../services/firebaseHelper';
 import { auth, db } from '../services/firebaseSetup'; 
 import { doc, updateDoc, getDocs, query, collection, where } from 'firebase/firestore';
+import { COLORS, LAYOUT, TYPOGRAPHY, COMMON_STYLES, IMAGE_DIMENSIONS } from '../utils/styleHelper';
 
 
 const WEATHER_API_KEY = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
@@ -312,7 +313,7 @@ const PostScreen = ({ navigation, route }) => {
               <View style={styles.locationInputContainer}>
                 <TextInput
                   style={[styles.input, styles.locationInput]}
-                  placeholder={formData.location ? formData.location : "Location and weather"}
+                  placeholder={formData.location ? formData.location : "Location and Weather"}
                   value={formData.location}
                   onChangeText={(text) => setFormData(prev => ({ ...prev, location: text }))}
                 />
@@ -355,16 +356,13 @@ const PostScreen = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
+  container: COMMON_STYLES.container,
   content: {
-    padding: 20,
+    padding: LAYOUT.padding.xl
   },
   imageSection: {
-    marginBottom: 20,
-    alignItems: 'center',
+    marginBottom: LAYOUT.padding.xl,
+    alignItems: 'center'
   },
   imageButton: {
     alignItems: 'center',
@@ -383,9 +381,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   imagePreview: {
-    width: '100%',
-    height: 300,
-    borderRadius: 10,
+    ...IMAGE_DIMENSIONS.preview,
+    borderRadius: LAYOUT.borderRadius.md
   },
   changeImageButton: {
     position: 'absolute',
@@ -399,30 +396,24 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
+    ...COMMON_STYLES.input,
+    marginBottom: LAYOUT.padding.md
   },
   descriptionInput: {
     height: 100,
     textAlignVertical: 'top',
   },
   postButton: {
-    backgroundColor: '#FF6B6B',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
+    ...COMMON_STYLES.button.primary,
+    marginTop: LAYOUT.padding.lg
   },
   disabledButton: {
     backgroundColor: '#ccc',
   },
   postButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: COLORS.text.light,
+    fontSize: TYPOGRAPHY.fontSize.md,
+    fontWeight: TYPOGRAPHY.fontWeight.bold
   },
   locationInputContainer: {
     flexDirection: 'row',
