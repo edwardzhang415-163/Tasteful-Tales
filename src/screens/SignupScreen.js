@@ -17,10 +17,26 @@ const SignupScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordHints, setPasswordHints] = useState([]);
+
+  const checkPasswordStrength = (password) => {
+    const hints = [];
+    if (password.length < 8) hints.push('At least 8 characters');
+    if (!/[A-Z]/.test(password)) hints.push('One uppercase letter');
+    if (!/[a-z]/.test(password)) hints.push('One lowercase letter');
+    if (!/\d/.test(password)) hints.push('One number');
+    setPasswordHints(hints);
+    return hints.length === 0;
+  };
 
   const handleSignup = async () => {
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    if (!checkPasswordStrength(password)) {
+      Alert.alert('Weak Password', 'Please fix the following:\n• ' + passwordHints.join('\n• '));
       return;
     }
 
@@ -49,7 +65,7 @@ const SignupScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.title}>Create Account</Text>
-        
+
         <TextInput
           style={styles.input}
           placeholder="Display Name"
@@ -71,9 +87,22 @@ const SignupScreen = ({ navigation }) => {
           style={styles.input}
           placeholder="Password"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(text) => {
+            setPassword(text);
+            checkPasswordStrength(text);
+          }}
           secureTextEntry
         />
+
+        {passwordHints.length > 0 && password.length > 0 && (
+          <View style={styles.hintsContainer}>
+            {passwordHints.map((hint, index) => (
+              <Text key={index} style={styles.hintText}>
+                • {hint}
+              </Text>
+            ))}
+          </View>
+        )}
 
         <TextInput
           style={styles.input}
@@ -169,6 +198,15 @@ const styles = StyleSheet.create({
   loginLinkText: {
     color: '#666',
     fontSize: 14,
+  },
+  hintsContainer: {
+    marginBottom: 15,
+    paddingHorizontal: 5,
+  },
+  hintText: {
+    color: '#FF6B6B',
+    fontSize: 12,
+    marginBottom: 3,
   },
 });
 
