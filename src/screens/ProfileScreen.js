@@ -139,12 +139,8 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.statLabel}>Posts</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{userProfile.followersCount}</Text>
-            <Text style={styles.statLabel}>Followers</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{userProfile.followingCount}</Text>
-            <Text style={styles.statLabel}>Following</Text>
+            <Text style={styles.statNumber}>{userProfile.eventsCount}</Text>
+            <Text style={styles.statLabel}>Events</Text>
           </View>
         </View>
       </View>

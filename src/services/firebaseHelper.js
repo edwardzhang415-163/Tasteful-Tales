@@ -1,7 +1,8 @@
-import { doc, addDoc, collection, setDoc, deleteDoc, updateDoc } from "firebase/firestore";
+import { doc, addDoc, collection, deleteDoc, updateDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebaseSetup";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "./firebaseSetup";
+import { auth } from "./firebaseSetup";
 
 export async function uploadImageData(uri) {
   try {
@@ -56,6 +57,20 @@ export async function deleteEventFromDB(eventId) {
   try {
     const eventDoc = doc(db, 'events', eventId);
     await deleteDoc(eventDoc);
+
+    // Count all events by the user
+    const eventsQuery = query(
+      collection(db, 'events'),
+      where('owner', '==', auth.currentUser.uid)
+    );
+    const eventsSnapshot = await getDocs(eventsQuery);
+    const totalEvents = eventsSnapshot.size;
+    // Update user's eventsCount with actual count
+    const userRef = doc(db, 'users', auth.currentUser.uid);
+    await updateDoc(userRef, {
+      eventsCount: totalEvents,
+    });
+
   } catch (error) {
     console.error('Error deleting event:', error);
   }
