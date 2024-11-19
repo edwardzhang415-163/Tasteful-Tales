@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { auth } from '../services/firebaseSetup';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -19,6 +19,19 @@ const LoginScreen = ({ navigation }) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigation.replace('Main');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const handlePasswordRecovery = async () => {
+    try {
+      if (!email) {
+        Alert.alert('Error', 'Please enter your email first');
+        return;
+      }
+      await sendPasswordResetEmail(auth, email);
+      Alert.alert('Success', 'Password reset email sent. Please check your inbox.');
     } catch (error) {
       Alert.alert('Error', error.message);
     }
@@ -55,7 +68,7 @@ const LoginScreen = ({ navigation }) => {
 
         <TouchableOpacity
           style={styles.forgotPassword}
-          onPress={() => navigation.navigate('ForgotPassword')}
+          onPress={handlePasswordRecovery}
         >
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>

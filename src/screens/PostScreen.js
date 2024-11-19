@@ -18,7 +18,7 @@ import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { writePostToDB } from '../services/firebaseHelper';
 import { auth, db } from '../services/firebaseSetup'; 
-import { doc, updateDoc, increment } from 'firebase/firestore';
+import { doc, updateDoc, getDocs, query, collection, where } from 'firebase/firestore';
 
 
 const WEATHER_API_KEY = process.env.EXPO_PUBLIC_WEATHER_API_KEY;

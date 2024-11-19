@@ -35,13 +35,11 @@ const SignupScreen = ({ navigation }) => {
         profileImage: 'https://placedog.net/301/301', // Default profile image
         bio: '',
         postsCount: 0,
-        followersCount: 0,
-        followingCount: 0,
+        eventsCount: 0,
         createdAt: new Date(),
       });
 
       Alert.alert('Success', 'Account created successfully!');
-      navigation.replace('Main');
     } catch (error) {
       Alert.alert('Error', error.message);
     }
