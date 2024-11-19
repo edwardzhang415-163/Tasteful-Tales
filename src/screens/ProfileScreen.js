@@ -12,20 +12,12 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db } from '../services/firebaseSetup';
-import { query, collection, where, onSnapshot, updateDoc, getDoc, doc } from 'firebase/firestore';
+import { query, collection, where, onSnapshot, updateDoc, getDoc, doc, getDocs } from 'firebase/firestore';
 import { uploadImageData } from '../services/firebaseHelper';
 import { auth } from '../services/firebaseSetup';
 
 const ProfileScreen = ({ navigation }) => {
-  const [userProfile, setUserProfile] = useState({
-    // displayName: 'John Doe',
-    // email: 'john@example.com',
-    // bio: 'Food enthusiast and amateur chef 🍳',
-    // profileImage: 'https://placedog.net/301/301',
-    // postsCount: 42,
-    // followersCount: 0,
-    // followingCount: 0,
-  });
+  const [userProfile, setUserProfile] = useState({});
   const [refreshing, setRefreshing] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
   const userId = auth.currentUser.uid;
@@ -48,20 +40,23 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const fetchUserProfile = async () => {
-    try {
-      const userRef = doc(db, 'users', userId);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setUserProfile(userDoc.data());
-        return userData;
-      } else {
-        console.error('No user found with the provided ID.');
-        return null;
+    const unsubscribe = onSnapshot(
+      doc(db, 'users', userId),
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const userData = docSnapshot.data();
+          setUserProfile(userData);
+        } else {
+          console.error('No user found with the provided ID.');
+          Alert.alert('Error', 'User profile not found');
+        }
+      },
+      (error) => {
+        console.error('Error listening to profile changes:', error);
+        Alert.alert('Error', 'Failed to get profile updates');
       }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
+    );
+    return () => unsubscribe()
   }
 
   useEffect(() => {
@@ -71,14 +66,13 @@ const ProfileScreen = ({ navigation }) => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    // TODO: Fetch updated profile data
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
   }, []);
 
   const handleEditProfile = () => {
-    navigation.navigate('EditProfile', {... userProfile, userId: userId, onProfileUpdate: () => fetchUserProfile()});
+    navigation.navigate('EditProfile', { ...userProfile, userId: userId });
   };
 
   const handleChangeProfilePicture = async () => {

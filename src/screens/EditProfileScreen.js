@@ -25,7 +25,6 @@ const EditProfileScreen = ({ navigation, route }) => {
         bio: formData.bio,
         email: formData.email,
       });
-      route.params.onProfileUpdate();
       Alert.alert('Success', 'Profile updated successfully!');
       navigation.goBack();
     } catch (error) {
