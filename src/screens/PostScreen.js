@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { writePostToDB } from '../services/firebaseHelper';
+import { auth } from '../services/firebaseSetup'; 
 
 
 const WEATHER_API_KEY = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
@@ -238,7 +239,7 @@ const PostScreen = ({ navigation, route }) => {
     setIsLoading(true);
 
     try {
-      await writePostToDB({ ...formData, owner: "DummyUserId", userImage: "https://placedog.net/301/301", userName: "John"}, image, "posts");
+      await writePostToDB({ ...formData, owner: auth.currentUser.uid}, image, "posts");
       Alert.alert('Success', 'Post created successfully!', [
         { text: 'OK', onPress: () => navigation.navigate('Feed') }
       ]);

@@ -14,6 +14,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { db } from '../services/firebaseSetup';
 import { query, collection, where, onSnapshot, updateDoc, getDoc, doc } from 'firebase/firestore';
 import { uploadImageData } from '../services/firebaseHelper';
+import { auth } from '../services/firebaseSetup';
 
 const ProfileScreen = ({ navigation }) => {
   const [userProfile, setUserProfile] = useState({
@@ -27,7 +28,7 @@ const ProfileScreen = ({ navigation }) => {
   });
   const [refreshing, setRefreshing] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
-  const userId = 'DummyUserId'; //  Needs to be replaced with the actual user ID
+  const userId = auth.currentUser.uid;
 
 
   const fetchUserPosts = async () => {
