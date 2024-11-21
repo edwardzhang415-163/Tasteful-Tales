@@ -203,8 +203,8 @@ Key Features:
 - **Create:**
   - Users can select a restaurant to create a new post
   - Integration with Google Places API for restaurant data
-- <img src="assets/newmap1.jpg" alt="map" width="300"/>
-- <img src="assets/newmap2.jpg" alt="map" width="300"/>
+- <img src="assets/Map.png" alt="mao" width="300"/>
+
 
 ### **5. Post Page**
 
