@@ -63,7 +63,7 @@ Key Features:
      - Temperature data
      - Location-based weather updates
 
-3. **Camera/Gallery Integration** ✅
+3. **Camera/Gallery Integration** ❌
      - Planned for next iteration
      - Photo capture from camera
      - Image selection from gallery
