@@ -203,7 +203,8 @@ Key Features:
 - **Create:**
   - Users can select a restaurant to create a new post
   - Integration with Google Places API for restaurant data
-- <img src="assets/Map.png" alt="map" width="300"/>
+- <img src="assets/newmap1.jpg" alt="map" width="300"/>
+- <img src="assets/newmap2.jpg" alt="map" width="300"/>
 
 ### **5. Post Page**
 
@@ -215,6 +216,7 @@ Key Features:
     - Getting current location with weather information
   - Restaurant information is automatically formatted when selected from map
 - <img src="assets/Post.png" alt="post" width="300"/>
+- <img src="assets/newpost2.jpg" alt="post" width="300"/>
 
 ### **6. Events Page**
 - **Create:**
