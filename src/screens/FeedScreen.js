@@ -10,8 +10,8 @@ import FeedCard from '../components/FeedCard';
 import { navigateToPost } from '../navigation/navigationUtils';
 import { db, auth } from '../services/firebaseSetup';
 import { onSnapshot, collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import { Ionicons } from '@expo/vector-icons';
-import { TextInput, TouchableOpacity } from 'react-native';
+
+import FeedSearchBar from '../components/FeedSearchBar';
 
 const FeedScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
@@ -89,33 +89,10 @@ const FeedScreen = ({ navigation }) => {
     }
   }, [searchQuery, posts]);
 
-  const handleSearch = (text) => {
-    setSearchQuery(text);
-  };
 
-  const clearSearch = () => {
-    setSearchQuery('');
+  const onBlur = (searchText) => {
+    setSearchQuery(searchText);
   };
-
-  // Search bar component
-  const SearchBar = () => (
-    <View style={styles.searchContainer}>
-      <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search posts by title..."
-        value={searchQuery}
-        onChangeText={handleSearch}
-        placeholderTextColor="#666"
-        autoFocus={true}
-      />
-      {searchQuery.length > 0 && (
-        <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
-          <Ionicons name="close-circle" size={20} color="#666" />
-        </TouchableOpacity>
-      )}
-    </View>
-  );
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -137,7 +114,7 @@ const FeedScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {user && <SearchBar />}
+      {user && <FeedSearchBar onBlur={onBlur} />}
       <FlatList
         data={filteredPosts}
         renderItem={({ item }) => (
@@ -169,37 +146,7 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 15,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    margin: 15,
-    marginBottom: 5,
-    paddingHorizontal: 15,
-    borderRadius: 25,
-    height: 45,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-    height: '100%',
-  },
-  clearButton: {
-    padding: 5,
-  },
+  }
 });
 
 export default FeedScreen; 

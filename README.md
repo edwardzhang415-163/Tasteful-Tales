@@ -63,14 +63,14 @@ Key Features:
      - Temperature data
      - Location-based weather updates
 
-3. **Camera/Gallery Integration** ❌
+3. **Camera/Gallery Integration** ✅
      - Planned for next iteration
      - Photo capture from camera
      - Image selection from gallery
      - Image preview and management
      - Upload functionality
 
-4. **Authentication** ❌
+4. **Authentication** ✅
    - Planned for next iteration
    - Currently using dummy user data
 
@@ -86,9 +86,11 @@ Key Features:
 - Map interface
 - Weather integration
 - Restaurant search and selection
+- Feed posts search and display
+- Signup and Login interface
+- User Authentication
 
 🔄 In Progress:
-- Authentication system
 - Notification system
 - Camera/Gallery functionality
 
@@ -119,10 +121,22 @@ Key Features:
 
 #### Zecheng Zhou
 - Implemented main event functionality
-- Integrated the firestore database
-- Integrated the firebase image storage
+- Created the firestore database
+- Created the firebase image storage
 - Developed the profile features
-
+- **Technical Implementations:**
+  - Firebase integrations:
+    - Firestore database management
+    - Cloud storage for images
+    - Security rules implementation
+  - Authentication system
+    - Signup and Login
+    - Password vaildation and reset
+    - Persistent login and user logout
+  - Real-time data synchronization
+    - listening to database changes
+    - updating UI based on database changes
+  
 ## UI Sketches
 
 1. Main Page Feed(Jiale Zhang):
@@ -150,12 +164,29 @@ Key Features:
     - Personal profile
     - Account information
     - updating profile info
-    
+6. Guest Page (Zecheng Zhou):
+    - display current posts
+    - Enhance user engagement
 
 
 **CRUD operations for each page:**
 
-### **1. Main Page (Feed)**
+### **1. Guest Page**
+- **Read:**
+  - Users can view the current posts without signing up or logging in
+  - <img src="assets/GuestFeed.png" alt="guest" width="300"/>
+
+### **2. Signup and Login Page**
+- **Create:**
+  - Users can create new accounts with email and password
+  - Password validation with strength requirements
+  - <img src="assets/Signup.png" alt="signup" width="300"/>
+- **Read:**
+  - Users can log in with existing credentials
+  - Password reset functionality available
+  - <img src="assets/Login.png" alt="login" width="300"/>
+
+### **3. Main Page (Feed)**
 
 - **Read:**
     - Users can browse the feed to see food stories shared by themselves and others.
@@ -163,17 +194,18 @@ Key Features:
     - <img src="assets/Feed.png" alt="feed" width="300"/>
 
 
-### **2. Map Page**
+### **4. Map Page**
 
 - **Read:**
   - Users can view nearby restaurants on the map
   - Users can see restaurant details including name, rating, and open status
+  - Users can re-search restaurants by dragging the map
 - **Create:**
   - Users can select a restaurant to create a new post
   - Integration with Google Places API for restaurant data
 - <img src="assets/Map.png" alt="map" width="300"/>
 
-### **3. Post Page**
+### **5. Post Page**
 
 - **Create:**
   - Users can create new food posts by:
@@ -184,7 +216,7 @@ Key Features:
   - Restaurant information is automatically formatted when selected from map
 - <img src="assets/Post.png" alt="post" width="300"/>
 
-### **4. Events Page**
+### **6. Events Page**
 - **Create:**
     - Users can create new events, such as food festivals, restaurant openings, or cooking plans. Title, Location, Description and Schedule can be added to the events.
     - <img src="assets/NewEvent.png" alt="new event" width="300"/>
@@ -198,7 +230,7 @@ Key Features:
     - Users can delete their events, removing them from their event list, with an alert of comfirmation.
     - <img src="assets/DeleteEvent.png" alt="delete event" width="300"/>
 
-### **5. Profile Page**
+### **7. Profile Page**
 - **Read:**
     - Users can view their own profile, including their profile photo, account infomation and their post images.
     - <img src="assets/Profile.png" alt="profile" width="300"/>
@@ -219,9 +251,7 @@ users/{userId}
 - bio: string
 - profileImage: string
 - postsCount: int
-- followersCount: int
-- followingCount: int
-
+- eventsCount: int
 ```
 
 2. Posts Collection
