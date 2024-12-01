@@ -63,8 +63,7 @@ Key Features:
      - Temperature data
      - Location-based weather updates
 
-3. **Camera/Gallery Integration** ❌
-     - Planned for next iteration
+3. **Camera/Gallery Integration** ✅
      - Photo capture from camera
      - Image selection from gallery
      - Image preview and management
@@ -80,7 +79,9 @@ Key Features:
 
 ### Implementation Progress
 
-✅ Completed in Iteration 2:
+✅ Completed in Iteration 3:
+- Photo capture from camera
+- Image selection from gallery
 - Location services
 - External API integration
 - Map interface
