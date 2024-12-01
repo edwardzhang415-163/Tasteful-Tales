@@ -43,7 +43,7 @@ Key Features:
 - Map Integration with Restaurant Search
 - Basic Profile Management
 
-### Iteration 2 Updates
+### Iteration 3 Updates
 
 #### New Functionalities
 
@@ -73,8 +73,7 @@ Key Features:
    - Planned for next iteration
    - Currently using dummy user data
 
-5. **Notifications** ❌
-   - Planned for next iteration
+5. **Notifications** ✅
    - Basic UI elements in place
 
 ### Implementation Progress
