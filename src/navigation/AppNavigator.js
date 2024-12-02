@@ -57,7 +57,7 @@ const MapStack = () => (
     <Stack.Screen 
       name="MapHome" 
       component={MapScreen}
-      options={{ title: 'Map' }}
+      options={{ title: 'Expolre Nearby Resturants' }}
     />
   </Stack.Navigator>
 );
