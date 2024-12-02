@@ -146,12 +146,12 @@ const MapScreen = ({ navigation }) => {
       )}
 
       {/* Add button */}
-      <TouchableOpacity 
+      {/* <TouchableOpacity 
         style={styles.addButton}
         onPress={() => handleAddPost()}
       >
         <Text style={styles.addButtonText}>ADD</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Refresh button */}
       <TouchableOpacity 

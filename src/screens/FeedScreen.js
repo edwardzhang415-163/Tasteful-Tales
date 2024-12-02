@@ -5,13 +5,14 @@ import {
   StyleSheet,
   ActivityIndicator,
   RefreshControl,
+  Image,
 } from 'react-native';
 import FeedCard from '../components/FeedCard';
 import { navigateToPost } from '../navigation/navigationUtils';
 import { db, auth } from '../services/firebaseSetup';
 import { onSnapshot, collection, doc, getDoc, getDocs } from 'firebase/firestore';
-
 import FeedSearchBar from '../components/FeedSearchBar';
+
 
 const FeedScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
@@ -112,10 +113,38 @@ const FeedScreen = ({ navigation }) => {
     );
   }
 
+
+  const welcomePost = {
+    postId: 'welcome',
+    title: 'Welcome to the Testful-Tales!',
+    description:'Login now to explore and share your favorite local restaurants, cafes, and more!',
+    image:  Image.resolveAssetSource(require('../../assets/icon.png')).uri,
+    createdDate: new Date(),
+    userImage: Image.resolveAssetSource(require('../../assets/icon.png')).uri,
+    userName: 'Testful-Tales Team',
+  }
+
+
+
   return (
     <View style={styles.container}>
       {user && <FeedSearchBar onBlur={onBlur} />}
-      <FlatList
+      {!user && <FlatList
+        data={[welcomePost, ...posts]}
+        renderItem={({ item }) => (
+          <FeedCard
+            post={item}
+            onPress={() => handlePostPress(item)}
+          />
+        )}
+        keyExtractor={(item, index) => {
+          return item.postId;
+        }}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        contentContainerStyle={styles.list}
+      />}
+      {user && <FlatList
         data={filteredPosts}
         renderItem={({ item }) => (
           <FeedCard
@@ -129,7 +158,7 @@ const FeedScreen = ({ navigation }) => {
         refreshing={refreshing}
         onRefresh={handleRefresh}
         contentContainerStyle={styles.list}
-      />
+      />}
     </View>
   );
 };
@@ -146,7 +175,13 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 15,
-  }
+  },
+  iconImage: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
+    marginTop: 50,
+  },
 });
 
 export default FeedScreen; 

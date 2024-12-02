@@ -13,6 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { writeEventToDB, updateEventToDB } from '../services/firebaseHelper';
 import { auth, db } from '../services/firebaseSetup';
 import { query, collection, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { scheduleEventNotification } from '../services/NotificationManager';
 
 const NewEventScreen = ({ navigation, route }) => {
   const [eventData, setEventData] = useState({
@@ -45,7 +46,8 @@ const NewEventScreen = ({ navigation, route }) => {
           { text: 'OK', onPress: () => navigation.goBack() }
         ]);
       } else {
-        await writeEventToDB({ ...eventData, owner: auth.currentUser.uid, userName: "John"});
+        const eventRef = await writeEventToDB({ ...eventData, owner: auth.currentUser.uid, userName: "John"});
+        await scheduleEventNotification({ ...eventData, eventId: eventRef.id, owner: auth.currentUser.uid, userName: "John" });
 
         // Count all events by the user
         const eventsQuery = query(
@@ -123,8 +125,9 @@ const NewEventScreen = ({ navigation, route }) => {
       {showDatePicker && (
         <DateTimePicker
           value={eventData.date}
-          mode="date"
+          mode="datetime"
           display="default"
+          is24Hour={true}
           onChange={onDateChange}
         />
       )}

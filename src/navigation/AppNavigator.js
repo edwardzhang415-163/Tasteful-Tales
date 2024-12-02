@@ -28,10 +28,10 @@ const AuthStack = () => (
       name="PublicFeed" 
       component={FeedScreen}
       options={({ navigation }) => ({
-        title: 'Feed',
+        title: 'Tastful Tales',
         headerRight: () => (
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={{ color: '#FF6B6B', fontSize: 16 }}>Login for more!</Text>
+            <Text style={{ color: '#FF6B6B', fontSize: 16 }}>Login Now !</Text>
           </TouchableOpacity>
         ),
       })}
@@ -57,7 +57,7 @@ const MapStack = () => (
     <Stack.Screen 
       name="MapHome" 
       component={MapScreen}
-      options={{ title: 'Map' }}
+      options={{ title: 'Expolre Nearby Resturants' }}
     />
   </Stack.Navigator>
 );

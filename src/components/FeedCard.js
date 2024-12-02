@@ -7,6 +7,7 @@ const FeedCard = ({ post }) => {
     <View key={post.postId} style={styles.card}>
       <View style={styles.header}>
         <Image 
+          // source={{ uri: post.userImage }} 
           source={{ uri: post.userImage }} 
           style={styles.profileImage} 
         />
@@ -20,6 +21,7 @@ const FeedCard = ({ post }) => {
       
       <View style={styles.content}>
         <Text style={styles.caption}>{post.title}</Text>
+        <Text style={styles.description}>{post.description}</Text>
         <Text style={styles.location}>{post.location}</Text>
       </View>
     </View>
@@ -64,6 +66,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   caption: {
+    fontSize: 14,
+    marginBottom: 5,
+    fontWeight: 'bold',
+  },
+  description: {
     fontSize: 14,
     marginBottom: 5,
   },
