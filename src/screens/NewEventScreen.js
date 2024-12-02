@@ -46,8 +46,8 @@ const NewEventScreen = ({ navigation, route }) => {
           { text: 'OK', onPress: () => navigation.goBack() }
         ]);
       } else {
-        await writeEventToDB({ ...eventData, owner: auth.currentUser.uid, userName: "John"});
-        await scheduleEventNotification({ ...eventData, owner: auth.currentUser.uid, userName: "John" });
+        const eventRef = await writeEventToDB({ ...eventData, owner: auth.currentUser.uid, userName: "John"});
+        await scheduleEventNotification({ ...eventData, eventId: eventRef.id, owner: auth.currentUser.uid, userName: "John" });
 
         // Count all events by the user
         const eventsQuery = query(

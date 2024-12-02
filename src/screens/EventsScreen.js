@@ -5,6 +5,7 @@ import { db } from '../services/firebaseSetup';
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { deleteEventFromDB } from '../services/firebaseHelper';
 import { auth } from '../services/firebaseSetup';
+import { cancelEventNotification } from '../services/NotificationManager';
 
 
 const EventsScreen = ({ navigation }) => {
@@ -23,7 +24,9 @@ const EventsScreen = ({ navigation }) => {
           description: data.description,
           date: data.date.toDate(),
           location: data.location,
-          reminder: true});
+          reminder: true,
+          notificationId: data.notificationId,
+        });
       });
       const sortedEvents = eventsArray
           .sort((a, b) => a.date - b.date);
@@ -52,6 +55,7 @@ const EventsScreen = ({ navigation }) => {
         {
           text: 'OK',
           onPress: async () => {
+            await cancelEventNotification(eventId);
             await deleteEventFromDB(eventId);
             setEvents(events.filter(event => event.id !== eventId));
           }

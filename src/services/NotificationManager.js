@@ -12,7 +12,7 @@ Notifications.setNotificationHandler({
 export const scheduleEventNotification = async (event) => {
   try {
     // Cancel any existing notifications for this event
-    await cancelEventNotification(event.id);
+    await cancelEventNotification(event.eventId);
 
     // Set notification for specified date and time
     const trigger = new Date(event.date);
@@ -27,7 +27,7 @@ export const scheduleEventNotification = async (event) => {
       content: {
         title: 'Event Reminder',
         body: `Don't forget: ${event.title} today at ${event.location}!`,
-        data: { eventId: event.id },
+        data: { eventId: event.eventId },
       },
       trigger,
     });
