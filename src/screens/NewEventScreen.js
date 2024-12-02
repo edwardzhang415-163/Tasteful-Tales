@@ -13,6 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { writeEventToDB, updateEventToDB } from '../services/firebaseHelper';
 import { auth, db } from '../services/firebaseSetup';
 import { query, collection, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { scheduleEventNotification } from '../services/NotificationManager';
 
 const NewEventScreen = ({ navigation, route }) => {
   const [eventData, setEventData] = useState({
@@ -46,6 +47,7 @@ const NewEventScreen = ({ navigation, route }) => {
         ]);
       } else {
         await writeEventToDB({ ...eventData, owner: auth.currentUser.uid, userName: "John"});
+        await scheduleEventNotification({ ...eventData, owner: auth.currentUser.uid, userName: "John" });
 
         // Count all events by the user
         const eventsQuery = query(

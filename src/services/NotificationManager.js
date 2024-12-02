@@ -14,10 +14,9 @@ export const scheduleEventNotification = async (event) => {
     // Cancel any existing notifications for this event
     await cancelEventNotification(event.id);
 
-    // Set notification for 9 AM on the event day
+    // Set notification for specified date and time
     const trigger = new Date(event.date);
-    trigger.setHours(9, 0, 0, 0);
-
+  
     // Don't schedule if the date is in the past
     if (trigger <= new Date()) {
       console.log('Skipping notification for past event:', event.title);
