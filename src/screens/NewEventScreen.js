@@ -123,8 +123,9 @@ const NewEventScreen = ({ navigation, route }) => {
       {showDatePicker && (
         <DateTimePicker
           value={eventData.date}
-          mode="date"
+          mode="datetime"
           display="default"
+          is24Hour={true}
           onChange={onDateChange}
         />
       )}

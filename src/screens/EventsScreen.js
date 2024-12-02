@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import * as Notifications from 'expo-notifications';
 import EventCard from '../components/EventCard';
 import { db } from '../services/firebaseSetup';
 import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { deleteEventFromDB } from '../services/firebaseHelper';
 import { auth } from '../services/firebaseSetup';
 
-// Configure notifications
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
 
 const EventsScreen = ({ navigation }) => {
   const [events, setEvents] = useState([]);
@@ -44,20 +35,6 @@ const EventsScreen = ({ navigation }) => {
     });
     return () => unsubscribe()
   }, []);
-
-  const scheduleNotification = async (event) => {
-    const trigger = new Date(event.date);
-    trigger.setHours(9); // Notify at 9 AM on event day
-    
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Event Reminder',
-        body: `Don't forget: ${event.title} today!`,
-        data: { eventId: event.id },
-      },
-      trigger,
-    });
-  };
 
   const handleAddEvent = () => {
     navigation.navigate('NewEvent');
