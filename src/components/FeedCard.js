@@ -21,6 +21,7 @@ const FeedCard = ({ post }) => {
       
       <View style={styles.content}>
         <Text style={styles.caption}>{post.title}</Text>
+        <Text style={styles.description}>{post.description}</Text>
         <Text style={styles.location}>{post.location}</Text>
       </View>
     </View>
@@ -68,6 +69,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 5,
     fontWeight: 'bold',
+  },
+  description: {
+    fontSize: 14,
+    marginBottom: 5,
   },
   location: {
     fontSize: 12,

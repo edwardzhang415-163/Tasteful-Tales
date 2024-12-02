@@ -116,11 +116,12 @@ const FeedScreen = ({ navigation }) => {
 
   const welcomePost = {
     postId: 'welcome',
-    title: 'Welcome to the Testful-Tales!\nLogin now to explore and share your favorite local restaurants.',
+    title: 'Welcome to the Testful-Tales!',
+    description:'Login now to explore and share your favorite local restaurants, cafes, and more!',
     image:  Image.resolveAssetSource(require('../../assets/icon.png')).uri,
     createdDate: new Date(),
     userImage: Image.resolveAssetSource(require('../../assets/icon.png')).uri,
-    userName: 'Testful-Tales',
+    userName: 'Testful-Tales Team',
   }
 
 
