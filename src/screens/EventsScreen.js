@@ -25,7 +25,6 @@ const EventsScreen = ({ navigation }) => {
           date: data.date.toDate(),
           location: data.location,
           reminder: true,
-          notificationId: data.notificationId,
         });
       });
       const sortedEvents = eventsArray

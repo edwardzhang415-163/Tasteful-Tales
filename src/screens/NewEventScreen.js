@@ -41,13 +41,13 @@ const NewEventScreen = ({ navigation, route }) => {
 
     try {
       if (route.params?.event) {
-        await updateEventToDB(route.params.event.id, { ...eventData, owner: auth.currentUser.uid, userName: "John"});
+        await updateEventToDB(route.params.event.id, { ...eventData, owner: auth.currentUser.uid});
         Alert.alert('Success', 'Event updated successfully!', [
           { text: 'OK', onPress: () => navigation.goBack() }
         ]);
       } else {
-        const eventRef = await writeEventToDB({ ...eventData, owner: auth.currentUser.uid, userName: "John"});
-        await scheduleEventNotification({ ...eventData, eventId: eventRef.id, owner: auth.currentUser.uid, userName: "John" });
+        const eventRef = await writeEventToDB({ ...eventData, owner: auth.currentUser.uid});
+        await scheduleEventNotification({ ...eventData, eventId: eventRef.id, owner: auth.currentUser.uid});
 
         // Count all events by the user
         const eventsQuery = query(
@@ -72,7 +72,7 @@ const NewEventScreen = ({ navigation, route }) => {
   };
 
   const onDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
+    // setShowDatePicker(false);
     if (selectedDate) {
       setEventData(prev => ({ ...prev, date: selectedDate }));
     }
