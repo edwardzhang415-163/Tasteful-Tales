@@ -32,6 +32,17 @@ Key Features:
    - Generate API key
    - Add to `.env` as `EXPO_PUBLIC_WEATHER_API_KEY`
 
+### Configuration
+Create a `.env` file in the root directory with the following environment variables:
+- EXPO_PUBLIC_API_apiKey;
+- EXPO_PUBLIC_API_authDomain;
+- EXPO_PUBLIC_API_projectId;
+- EXPO_PUBLIC_API_storageBucket;
+- EXPO_PUBLIC_API_messagingSenderId;
+- EXPO_PUBLIC_API_appId;
+- EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
+- EXPO_PUBLIC_WEATHER_API_KEY;
+
 ## Current Implementation Status
 
 ### Completed Features
@@ -79,6 +90,10 @@ Key Features:
    - Event reminder set automatically
    - Notify user when event approches
 
+6. **Post Search** ✅
+  - Search posts by title
+  - Sort posts by date
+
 ### Implementation Progress
 
 ✅ Completed in Iteration 3:
@@ -94,6 +109,7 @@ Key Features:
 - User Authentication
 - Notification system
 - Camera/Gallery functionality
+- Post search by its title
 
 🔄 In Progress:
 - None

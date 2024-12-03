@@ -11,7 +11,7 @@ Notifications.setNotificationHandler({
 
 export const scheduleEventNotification = async (event) => {
   try {
-    // Cancel any existing notifications for this event
+    // Cancel any existing notific›ations for this event
     await cancelEventNotification(event.eventId);
 
     // Set notification for specified date and time
