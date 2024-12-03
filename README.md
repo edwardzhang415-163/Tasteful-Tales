@@ -20,6 +20,9 @@ Key Features:
 ### Slogan
 "Every meal tells a story - Share yours with Tasteful Tales"
 
+### DEMO Video
+https://www.youtube.com/watch?v=WJVjb9Je0JA&t=45s
+
 ### API Keys Required
 1. **Google Places API**
    - Create a project in Google Cloud Console
