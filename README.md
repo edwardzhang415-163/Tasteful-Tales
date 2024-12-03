@@ -70,12 +70,14 @@ Key Features:
      - Upload functionality
 
 4. **Authentication** ✅
-   - Planned for next iteration
-   - Currently using dummy user data
+    - Firebase Authentication integrated
+    - Access control
+    - Login and signup interface
+    - Password reset through Email
 
-5. **Notifications** ❌
-   - Planned for next iteration
-   - Basic UI elements in place
+5. **Notifications** ✅
+   - Event reminder set automatically
+   - Notify user when event approches
 
 ### Implementation Progress
 
@@ -90,10 +92,12 @@ Key Features:
 - Feed posts search and display
 - Signup and Login interface
 - User Authentication
-
-🔄 In Progress:
 - Notification system
 - Camera/Gallery functionality
+
+🔄 In Progress:
+- None
+
 
 ### Team Member Contributions
 

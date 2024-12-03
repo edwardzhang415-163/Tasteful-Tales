@@ -28,7 +28,7 @@ const AuthStack = () => (
       name="PublicFeed" 
       component={FeedScreen}
       options={({ navigation }) => ({
-        title: 'Tastful Tales',
+        title: 'Tasteful Tales',
         headerRight: () => (
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
             <Text style={{ color: '#FF6B6B', fontSize: 16 }}>Login Now !</Text>
