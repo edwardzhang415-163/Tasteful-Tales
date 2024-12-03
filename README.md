@@ -43,7 +43,7 @@ Key Features:
 - Map Integration with Restaurant Search
 - Basic Profile Management
 
-### Iteration 2 Updates
+### Iteration 2 and 3 Updates
 
 #### New Functionalities
 
@@ -226,7 +226,8 @@ Key Features:
 ### **6. Events Page**
 - **Create:**
     - Users can create new events, such as food festivals, restaurant openings, or cooking plans. Title, Location, Description and Schedule can be added to the events.
-    - <img src="assets/NewEvent.png" alt="new event" width="300"/>
+    - An notification reminder will be created along side the creation of the event. Notification will be made when the event time that users set approches.
+    - <img src="assets/NewEvent.png" alt="new event" width="300"/> <img src="assets/eventNotification.png" alt="new event" width="300"/>
 - **Read:**
     - Users can browse upcoming events in list view, seeing details like dates, descriptions, and locations.
     - <img src="assets/Events.png" alt="events" width="300"/>
