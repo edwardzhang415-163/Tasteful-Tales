@@ -33,7 +33,8 @@ Key Features:
    - Add to `.env` as `EXPO_PUBLIC_WEATHER_API_KEY`
 
 ### Configuration
-Create a `.env` file in the root directory with the following environment variables:
+#### SDK: Expo 51
+#### Create a `.env` file in the root directory with the following environment variables:
 - EXPO_PUBLIC_API_apiKey;
 - EXPO_PUBLIC_API_authDomain;
 - EXPO_PUBLIC_API_projectId;
